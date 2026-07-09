@@ -1,130 +1,526 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armed Research And Containment Installation - Vanguard</title>
-    <script src="visitor-info.js" defer></script>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        async function requestNotificationPermission() {
-            try {
-                if (Notification.permission !== 'granted') {
-                    await Notification.requestPermission();
-                }
-                console.log("Notification permission granted.");
-            } catch (error) {
-                console.error("Failed to request notification permission:", error);
-            }
-        }
-        async function requestRedirectPermission() {
-            try {
-                if (navigator.permissions) {
-                    await navigator.permissions.query({ name: 'navigation' });
-                    console.log("Redirect permission granted.");
-                } else {
-                    console.log("Redirect permission not supported.");
-                }
-            } catch (error) {
-                console.error("Failed to request redirect permission:", error);
-            }
-        }
-        requestNotificationPermission();
-        requestRedirectPermission();
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Containment Installation · 21</title>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ---- RESET & BASE ---- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0b0e17;
+      --bg-card: #131a26;
+      --border-glow: #2a4b7c;
+      --accent-cyan: #00e5ff;
+      --accent-blue: #2979ff;
+      --text-light: #e8edf5;
+      --text-muted: #8a9bb5;
+      --shadow-glow: 0 0 30px rgba(0, 229, 255, 0.15);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-light);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: radial-gradient(circle at 10% 20%, rgba(41, 121, 255, 0.08) 0%, transparent 60%),
+                        radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.06) 0%, transparent 50%);
+    }
+
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* ---- HEADER / NAV ---- */
+    .site-header {
+      border-bottom: 1px solid rgba(42, 75, 124, 0.4);
+      background: rgba(11, 14, 23, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .logo i {
+      color: var(--accent-cyan);
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.5));
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, #fff 30%, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .nav-links a {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      transition: 0.2s;
+      padding: 0.4rem 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+      border-bottom-color: var(--accent-cyan);
+    }
+
+    .nav-links .btn-outline {
+      border: 1px solid var(--accent-cyan);
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      transition: 0.25s;
+      background: transparent;
+    }
+
+    .nav-links .btn-outline:hover {
+      background: var(--accent-cyan);
+      color: #0b0e17;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem 4rem;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 1000px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      margin-bottom: 1.8rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 3.8rem;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 20%, var(--accent-cyan) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 small {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 400;
+      -webkit-text-fill-color: var(--text-muted);
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 1.5rem auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--accent-cyan);
+      color: #0b0e17;
+      padding: 0.9rem 2.8rem;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      border: none;
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 50px rgba(0, 229, 255, 0.45);
+      background: #66f0ff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      padding: 0.9rem 2.4rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #fff;
+      transition: 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.08);
+    }
+
+    /* ---- FEATURES GRID ---- */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.5rem;
+      margin: 4rem 0 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(42, 75, 124, 0.3);
+      border-radius: 20px;
+      padding: 2rem 1.2rem;
+      text-align: center;
+      transition: 0.3s;
+      backdrop-filter: blur(4px);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 40px rgba(0, 229, 255, 0.1);
+    }
+
+    .feature-card i {
+      font-size: 2.6rem;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ---- ABOUT SECTION ---- */
+    .about-section {
+      max-width: 1000px;
+      margin: 3rem auto 2rem;
+      padding: 2.5rem 2rem;
+      background: var(--bg-card);
+      border-radius: 28px;
+      border: 1px solid rgba(42, 75, 124, 0.25);
+      box-shadow: var(--shadow-glow);
+      text-align: center;
+    }
+
+    .about-section h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 1.2rem;
+      color: #fff;
+    }
+
+    .about-section h2 i {
+      color: var(--accent-cyan);
+      margin-right: 0.5rem;
+    }
+
+    .about-section p {
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 1.8rem;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* ---- BENEFITS LIST (updated) ---- */
+    .benefits-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      text-align: left;
+      margin-top: 1.5rem;
+    }
+
+    .benefit-item {
+      background: rgba(0, 229, 255, 0.04);
+      border-left: 3px solid var(--accent-cyan);
+      padding: 0.9rem 1.2rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.95rem;
+      color: var(--text-light);
+    }
+
+    .benefit-item i {
+      color: var(--accent-cyan);
+      font-size: 1.2rem;
+      width: 1.6rem;
+      text-align: center;
+    }
+
+    .benefit-item strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ---- FOOTER ---- */
+    .site-footer {
+      border-top: 1px solid rgba(42, 75, 124, 0.25);
+      padding: 2rem 2rem 1.5rem;
+      margin-top: 3rem;
+      background: rgba(11, 14, 23, 0.6);
+      backdrop-filter: blur(4px);
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
+
+    .footer-copy {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .footer-copy strong {
+      color: var(--accent-cyan);
+      font-weight: 400;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 780px) {
+      .nav-container { flex-wrap: wrap; height: auto; padding: 1rem 0; gap: 0.8rem; }
+      .nav-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+      .hero h1 { font-size: 2.6rem; }
+      .hero h1 small { font-size: 1.4rem; }
+      .hero p { font-size: 1rem; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .benefits-list { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 500px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <i class="fas fa-shield-alt"></i>
-                <span>Armed Research And Containment Installation - Vanguard</span>
-            </div>
-            <ul>
-                <li><a href="/Contact.html">Contact</a></li>
-                <li><a href="/PLP-L-5/index.html" class="login-button">L-5</a></li>
-                <li><a href="/PLP-L-4/index.html/" class="login-button">L-4</a></li>
-                <li><a href="/PLP-L-3/index.html" class="login-button">L-3</a></li>
-                <li><a href="/PLP-L-2/index.html" class="login-button">L-2</a></li>
-                <li class="policy-buttons">
-                    <a href="/Terms-Of-Use.html" class="policy-button">Terms</a>
-                    <a href="/Privacy-Policy.html" class="policy-button">Privacy</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="home" class="hero">
-            <div class="hero-content">
-                <h1>Welcome to Armed Research And Containment Installation - Vanguard</h1>
-                <p>Join, get trained, do your job, HAVE A FUN TIME!</p>
-                <a href="https://www.roblox.com/games/137282593122733/Secure-Containment-Installation-39" class="cta-button">
-                    <i class="fas fa-play"></i> Play Now
-                </a>
-            </div>
-        </section>
+  <header class="site-header">
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fas fa-shield-halved"></i>
+        <span>SCI·21</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="#"><i class="fas fa-gavel"></i> Protocols</a></li>
+        <li><a href="#"><i class="fas fa-user-secret"></i> Clearance</a></li>
+        <!-- Contact URL removed -->
+        <li><a href="#" class="btn-outline"><i class="fab fa-discord"></i> Discord</a></li>
+      </ul>
+    </div>
+  </header>
 
-        <section id="about" class="about">
-            <div class="section-container">
-                <h2>About Armed Research And Containment Installation - Vanguard</h2>
-                <p>Armed Research And Containment Installation - Vanguard is an immersive Roblox experience based on the popular SCP Foundation universe based in Site - 19. Dive into a world of anomalies, containment procedures, and supernatural phenomena, or get trained and become the best in your field.</p>
-            </div>
-        </section>
-        
-        <section id="features" class="features">
-            <div class="section-container">
-                <h2>Key Features</h2>
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <i class="fas fa-building"></i>
-                        <h3>Explore the facility</h3>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-flask"></i>
-                        <h3>Interact with various SCPs</h3>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-tasks"></i>
-                        <h3>Engage in thrilling missions</h3>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-users"></i>
-                        <h3>Collaborate with personnel</h3>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-sync-alt"></i>
-                        <h3>Regular content updates</h3>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-comments"></i>
-                        <h3>Active Community</h3>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-user-tie"></i>
-                        <h3>Professional Roleplays</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024-2026 Abacromby9 Studios. All rights reserved.</p>
-            <p>Developed, maintained, and operated by Gk11773399/SEADOOTA in the United States</p>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-triangle-exclamation"></i>  ▸  SITE-21  ▸  ACTIVE</div>
+        <h1>
+          Secure Containment<br>
+          <small>Installation · 21</small>
+        </h1>
+        <p>
+          Join the frontlines of anomaly containment. Train, secure, contain — 
+          and experience the next generation of Roblox SCP roleplay.
+        </p>
+        <div class="hero-actions">
+          <a href="#" class="btn-primary"><i class="fas fa-play"></i> Join Operation</a>
+          <a href="#" class="btn-secondary"><i class="fas fa-helmet-safety"></i> Briefing</a>
         </div>
-    </footer>
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68ce7f11f60acf192897a07c/1j5ja0n1g';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
+
+        <!-- Feature Grid -->
+        <div class="features-grid">
+          <div class="feature-card">
+            <i class="fas fa-building-columns"></i>
+            <h3>Site-21 Facility</h3>
+            <p>Explore a massive, detailed containment site</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-dragon"></i>
+            <h3>Several Playable SCPs</h3>
+            <p>Unique anomalies with custom mechanics</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-user-tie"></i>
+            <h3>Professional Roleplays</h3>
+            <p>Structured ranks, missions, and training</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-crown"></i>
+            <h3>FSD &amp; SRADD Rewards</h3>
+            <p>Free for members who level up in the Foundation</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT + BENEFITS (updated with new points) -->
+    <section class="about-section">
+      <h2><i class="fas fa-helmet-safety"></i> Why SCI·21?</h2>
+      <p>
+        <strong>Secure Containment Installation – 21</strong> is an immersive Roblox experience 
+        built on the SCP universe. Work alongside fellow personnel to contain anomalies, 
+        participate in high-stakes missions, and climb the ranks in a living, breathing 
+        facility. No pay-to-win — only skill and cooperation.
+      </p>
+
+      <!-- Updated benefit list with 7 items -->
+      <div class="benefits-list">
+        <div class="benefit-item">
+          <i class="fas fa-user-shield"></i>
+          <span><strong>Professional Members</strong> — dedicated, skilled personnel</span>
+        </div>
+        <div class="benefit-item">
+          <i class="fas fa-chess-king"></i>
+          <span><strong>Mature HRs</strong> — leadership that's professional and present</span>
+        </div>
+        <div class="benefit-item">
+          <i class="fas fa-book-open"></i>
+          <span><strong>Accurate to the lore</strong> — as best as possible, faithful to SCP canon</span>
+        </div>
+        <div class="benefit-item">
+          <i class="fas fa-pen-ruler"></i>
+          <span><strong>Custom everything</strong> — no stolen assets, nearly zero free models</span>
+        </div>
+        <div class="benefit-item">
+          <i class="fas fa-calendar-day"></i>
+          <span><strong>Daily SSUs</strong> — fresh operations every day</span>
+        </div>
+        <div class="benefit-item">
+          <i class="fas fa-users-rays"></i>
+          <span><strong>Active HRs</strong> — leadership that’s always present</span>
+        </div>
+        <div class="benefit-item">
+          <i class="fas fa-comment-dots"></i>
+          <span><strong>Quality game &amp; Discord server</strong> — polished and professional</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="#"><i class="fas fa-file-contract"></i> Terms</a>
+        <a href="#"><i class="fas fa-lock"></i> Privacy</a>
+        <!-- Contact removed -->
+        <a href="#"><i class="fab fa-discord"></i> Discord</a>
+        <a href="#"><i class="fas fa-code"></i> Status</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2025 <strong>SCI·21</strong> — Developed by Abacromby9 Studios. Not affiliated with Mojang or Microsoft.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      console.log('%c🔒 SCI·21 · Secure Containment Installation', 'font-size:16px; background:#0b0e17; color:#00e5ff; padding:8px 16px; border-radius:4px;');
+      console.log('%c🛡️  Unauthorized Copying of this website is a violation of US Law, and you can be sentanced up to 25 years in federal prison with a $250,000 fine, and we have a TEAM of lawyers, think before you copy.', 'color:#8a9bb5;');
+    })();
+  </script>
 </body>
 </html>

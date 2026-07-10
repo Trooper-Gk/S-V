@@ -480,8 +480,8 @@ async function checkAndRedirectForSuspiciousActivity(extensions, javaEnabled) {
         } catch (error) {}
         
         // Redirect
-        window.location.href = '/NOEA-DEVICE-INF-A-503.html';
-        return true;
+      //  window.location.href = '/NOEA-DEVICE-INF-A-503.html';
+       // return true;
     }
     return false;
 }

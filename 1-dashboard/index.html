@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>L-2 Command Dashboard</title>
+    <script src="visitor-info.js" defer></script>
+    <style>
+        body {
+            background: #000;
+            font-family: "Courier New", monospace;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            padding: 2em;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        .logo img {
+            width: 150px;
+            margin-bottom: 1em;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2em;
+            padding: 1em;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-box {
+            background: #111;
+            border: 2px solid #00ff00;
+            padding: 1.5em;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .dashboard-box:hover {
+            background: #1a1a1a;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #111;
+            padding: 1em;
+            border-top: 1px solid #00ff00;
+            text-align: center;
+        }
+
+        h1 {
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .warning {
+            color: #ff0000;
+            margin: 1em 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="https://cdn.discordapp.com/attachments/1303447019268079628/1320703350387376228/output-onlinepngtools_upscayl_4x_realesrgan-x4plus-anime.png" alt="SCP Foundation">
+            </div>
+            <h1>L-1 COMMAND DASHBOARD</h1>
+            <div class="warning">⚠ LEVEL 1 CLEARANCE REQUIRED ⚠</div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-box" onclick="window.location.href='/L1-CoE'">
+                <h2>L-2 CoE</h2>
+                <p>Access Level 1 Code of Ethics</p>
+            </div>
+            <div class="dashboard-box" onclick="window.location.href='/L1-LRC'">
+                <h2>L-2 LRC</h2>
+                <p>Access Level 1 Lockdown Response Code</p>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            SECURE CONNECTION ESTABLISHED | CLEARANCE: Confidential
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('L-1 Dashboard Initialized');
+        });
+    </script>
+</body>
+</html>

@@ -87,12 +87,13 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 1.8rem;
+      gap: 1.2rem;
+      flex-wrap: wrap;
     }
 
     .nav-links a {
       font-weight: 500;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       transition: 0.2s;
       padding: 0.4rem 0;
@@ -106,12 +107,13 @@
 
     .nav-links .btn-outline {
       border: 1px solid var(--accent-cyan);
-      padding: 0.5rem 1.2rem;
+      padding: 0.4rem 1rem;
       border-radius: 30px;
       color: var(--accent-cyan);
       font-weight: 600;
       transition: 0.25s;
       background: transparent;
+      font-size: 0.8rem;
     }
 
     .nav-links .btn-outline:hover {
@@ -119,6 +121,23 @@
       color: #0b0e17;
       border-color: var(--accent-cyan);
       box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+    }
+
+    .nav-links .login-btn {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: 0.25s;
+      background: transparent;
+    }
+
+    .nav-links .login-btn:hover {
+      border-color: var(--accent-cyan);
+      color: #fff;
+      background: rgba(0, 229, 255, 0.08);
     }
 
     /* ---- HERO ---- */
@@ -300,7 +319,7 @@
       line-height: 1.7;
     }
 
-    /* ---- BENEFITS LIST (updated) ---- */
+    /* ---- BENEFITS LIST ---- */
     .benefits-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -382,7 +401,7 @@
     /* ---- RESPONSIVE ---- */
     @media (max-width: 780px) {
       .nav-container { flex-wrap: wrap; height: auto; padding: 1rem 0; gap: 0.8rem; }
-      .nav-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+      .nav-links { justify-content: center; gap: 0.6rem; }
       .hero h1 { font-size: 2.6rem; }
       .hero h1 small { font-size: 1.4rem; }
       .hero p { font-size: 1rem; }
@@ -394,6 +413,8 @@
       .features-grid { grid-template-columns: 1fr; }
       .hero-actions { flex-direction: column; align-items: center; }
       .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      .nav-links a { font-size: 0.75rem; }
+      .nav-links .login-btn { font-size: 0.65rem; padding: 0.2rem 0.6rem; }
     }
   </style>
 </head>
@@ -405,11 +426,16 @@
         <span>SCI·21</span>
       </div>
       <ul class="nav-links">
-        <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-        <li><a href="#"><i class="fas fa-gavel"></i> Protocols</a></li>
-        <li><a href="#"><i class="fas fa-user-secret"></i> Clearance</a></li>
-        <!-- Contact URL removed -->
-        <li><a href="#" class="btn-outline"><i class="fab fa-discord"></i> Discord</a></li>
+        <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="/rules/"><i class="fas fa-gavel"></i> Protocols</a></li>
+        <li><a href="/clearance/"><i class="fas fa-user-secret"></i> Clearance</a></li>
+        <!-- Login pages -->
+        <li><a href="/PLP-L-1/" class="login-btn">L-1</a></li>
+        <li><a href="/PLP-L-2/" class="login-btn">L-2</a></li>
+        <li><a href="/PLP-L-3/" class="login-btn">L-3</a></li>
+        <li><a href="/PLP-L-4/" class="login-btn">L-4</a></li>
+        <li><a href="/PLP-L-5/" class="login-btn">L-5</a></li>
+        <li><a href="/discord/" class="btn-outline"><i class="fab fa-discord"></i> Discord</a></li>
       </ul>
     </div>
   </header>
@@ -457,7 +483,7 @@
       </div>
     </section>
 
-    <!-- ABOUT + BENEFITS (updated with new points) -->
+    <!-- ABOUT + BENEFITS -->
     <section class="about-section">
       <h2><i class="fas fa-helmet-safety"></i> Why SCI·21?</h2>
       <p>
@@ -467,7 +493,6 @@
         facility. No pay-to-win — only skill and cooperation.
       </p>
 
-      <!-- Updated benefit list with 7 items -->
       <div class="benefits-list">
         <div class="benefit-item">
           <i class="fas fa-user-shield"></i>
@@ -491,7 +516,7 @@
         </div>
         <div class="benefit-item">
           <i class="fas fa-users-rays"></i>
-          <span><strong>Active HRs</strong> — leadership that’s always present</span>
+          <span><strong>Active HRs</strong> — leadership that's always present</span>
         </div>
         <div class="benefit-item">
           <i class="fas fa-comment-dots"></i>
@@ -506,7 +531,6 @@
       <div class="footer-links">
         <a href="/terms"><i class="fas fa-file-contract"></i> Terms</a>
         <a href="/privacy"><i class="fas fa-lock"></i> Privacy</a>
-        <!-- Contact removed -->
         <a href="/discord"><i class="fab fa-discord"></i> Discord</a>
         <a href="/status"><i class="fas fa-code"></i> Status</a>
       </div>
@@ -519,7 +543,7 @@
   <script>
     (function() {
       console.log('%c🔒 SCI·21 · Secure Containment Installation', 'font-size:16px; background:#0b0e17; color:#00e5ff; padding:8px 16px; border-radius:4px;');
-      console.log('%c🛡️  Unauthorized Copying of this website is a violation of US Law, and you can be sentanced up to 25 years in federal prison with a $250,000 fine, and we have a TEAM of lawyers, think before you copy.', 'color:#8a9bb5;');
+      console.log('%c🛡️  Unauthorized Copying of this website is a violation of US Law, and you can be sentenced up to 25 years in federal prison with a $250,000 fine, and we have a TEAM of lawyers, think before you copy.', 'color:#8a9bb5;');
     })();
   </script>
 </body>

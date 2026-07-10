@@ -87,12 +87,12 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 1.8rem;
+            gap: 1.2rem;
         }
 
         .nav-links a {
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             transition: 0.2s;
             padding: 0.4rem 0;
@@ -102,6 +102,24 @@
         .nav-links a:hover {
             color: #fff;
             border-bottom-color: var(--accent-cyan);
+        }
+
+        .nav-links .login-btn {
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            color: var(--accent-cyan);
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: 0.25s;
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .nav-links .login-btn:hover {
+            background: var(--accent-cyan);
+            color: #0b0e17;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
         }
 
         .nav-links .btn-outline {
@@ -119,6 +137,11 @@
             color: #0b0e17;
             border-color: var(--accent-cyan);
             box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .nav-divider {
+            color: rgba(255,255,255,0.1);
+            font-size: 0.8rem;
         }
 
         /* ---- HERO ---- */
@@ -382,7 +405,7 @@
         /* ---- RESPONSIVE ---- */
         @media (max-width: 780px) {
             .nav-container { flex-wrap: wrap; height: auto; padding: 1rem 0; gap: 0.8rem; }
-            .nav-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 0.8rem; }
             .hero h1 { font-size: 2.6rem; }
             .hero h1 small { font-size: 1.4rem; }
             .hero p { font-size: 1rem; }
@@ -394,6 +417,7 @@
             .features-grid { grid-template-columns: 1fr; }
             .hero-actions { flex-direction: column; align-items: center; }
             .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+            .nav-links .login-btn { font-size: 0.7rem; padding: 0.2rem 0.6rem; }
         }
     </style>
 </head>
@@ -409,8 +433,13 @@
                 <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="/rules/"><i class="fas fa-gavel"></i> Protocols</a></li>
                 <li><a href="/clearance/"><i class="fas fa-user-secret"></i> Clearance</a></li>
-                <!-- New L1-CoE link -->
                 <li><a href="/L1-CoE/"><i class="fas fa-scroll"></i> L1-CoE</a></li>
+                <!-- Login pages -->
+                <span class="nav-divider">|</span>
+                <li><a href="/PLP-L-5/" class="login-btn">L-5</a></li>
+                <li><a href="/PLP-L-4/" class="login-btn">L-4</a></li>
+                <li><a href="/PLP-L-3/" class="login-btn">L-3</a></li>
+                <li><a href="/PLP-L-2/" class="login-btn">L-2</a></li>
                 <!-- Contact URL removed -->
                 <li><a href="/discord/" class="btn-outline"><i class="fab fa-discord"></i> Discord</a></li>
             </ul>
@@ -514,7 +543,7 @@
                 <a href="/status/"><i class="fas fa-code"></i> Status</a>
             </div>
             <div class="footer-copy">
-                &copy; 2025 <strong>SCI·21</strong> — Developed by Abacromby9 Studios/Gk11773399. Not affiliated with Roblox Corp.
+                &copy; 2025 <strong>SCI·21</strong> — Developed by Abacromby9 Studios. Not affiliated with Mojang or Microsoft.
             </div>
         </div>
     </footer>

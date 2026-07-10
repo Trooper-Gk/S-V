@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abacromby9 Studios Privacy Policy</title>
+    <script src="visitor-info.js" defer></script>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ---- RESET & BASE (from homepage) ---- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0b0e17;
+            --bg-card: #131a26;
+            --border-glow: #2a4b7c;
+            --accent-cyan: #00e5ff;
+            --accent-blue: #2979ff;
+            --text-light: #e8edf5;
+            --text-muted: #8a9bb5;
+            --shadow-glow: 0 0 30px rgba(0, 229, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 20%, rgba(41, 121, 255, 0.08) 0%, transparent 60%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.06) 0%, transparent 50%);
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        a:hover {
+            color: #66f0ff;
+            text-decoration: underline;
+        }
+
+        /* ---- HEADER / NAV (from homepage) ---- */
+        .site-header {
+            border-bottom: 1px solid rgba(42, 75, 124, 0.4);
+            background: rgba(11, 14, 23, 0.85);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
+        }
+
+        .logo i {
+            color: var(--accent-cyan);
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.5));
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #fff 30%, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            transition: 0.2s;
+            padding: 0.4rem 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            border-bottom-color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .nav-links .btn-outline {
+            border: 1px solid var(--accent-cyan);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            transition: 0.25s;
+            background: transparent;
+        }
+
+        .nav-links .btn-outline:hover {
+            background: var(--accent-cyan);
+            color: #0b0e17;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+            text-decoration: none;
+        }
+
+        /* ---- Container ---- */
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            background: rgba(19, 26, 38, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 2.5rem 3rem;
+            border: 1px solid rgba(42, 75, 124, 0.25);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ---- Headings ---- */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ffffff 20%, var(--accent-cyan) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 229, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ---- Dates ---- */
+        .dates {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(0, 229, 255, 0.04);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 4px;
+        }
+
+        /* ---- Sections ---- */
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem 1.8rem;
+            background: rgba(11, 14, 23, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(42, 75, 124, 0.2);
+            transition: 0.3s;
+        }
+
+        .section:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.05);
+        }
+
+        .section p {
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ---- Lists ---- */
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        ul li, ol li {
+            margin-bottom: 0.4rem;
+        }
+
+        ul {
+            list-style-type: disc;
+        }
+
+        ol {
+            list-style-type: decimal;
+        }
+
+        /* ---- Highlight text ---- */
+        .highlight {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .highlight-warning {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; height: auto; padding: 1rem 0; gap: 0.8rem; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+            .container { padding: 1.5rem; margin: 1rem; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.2rem; }
+            .section { padding: 1rem 1.2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 1rem; margin: 0.5rem; }
+            h1 { font-size: 1.4rem; }
+            ul, ol { margin-left: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR (from homepage) -->
+    <header class="site-header">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shield-halved"></i>
+                <span>SCI·21</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/rules/"><i class="fas fa-gavel"></i> Protocols</a></li>
+                <li><a href="/clearance/"><i class="fas fa-user-secret"></i> Clearance</a></li>
+                <!-- Contact URL removed -->
+                <li><a href="/discord/" class="btn-outline"><i class="fab fa-discord"></i> Discord</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1><i class="fas fa-shield-alt"></i> Abacromby9 Studios Privacy Policy</h1>
+        
+        <div class="dates">
+            <i class="fas fa-calendar-alt"></i> Created: 1/2/2024<br>
+            <i class="fas fa-pen"></i> Last Revised: 2/22/2025
+        </div>
+
+        <div class="section">
+            <p>Abacromby Studios (the "Company") is committed to maintaining robust privacy protections for its users. Our Privacy Policy ("Privacy Policy") is designed to help you understand how we collect, use and safeguard the information you provide to us and to assist you in making informed decisions when using our Service.</p>
+            
+            <p>For purposes of this Agreement, "<span class="highlight">Website</span>" refers to the Company's website, which can be accessed at <a href="https://sci-1739.vercel.app">https://sci-1739.vercel.app</a>. "<span class="highlight">Game</span>" refers to any Roblox game/experience hosted on the ROBLOX platform that is under the <span class="highlight">SCI-21 Brand</span>. "Service" refers to the Company's services accessed via the Website or Game, in which users can roleplay in the SCP genre. The terms "we," "us," and "our" refer to the Company. "You" refers to you, as a user of our Website, Game, or our Service.</p>
+            
+            <p>By accessing our Website or our Service, you accept our Privacy Policy and Terms of Use (found here: <a href="/terms">https://sci-1739.vercel.app/terms</a>), and you consent to our collection, storage, use and disclosure of your Personal Information as described in this Privacy Policy.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-database"></i> I. INFORMATION WE COLLECT</h2>
+            <p>We collect "Non-Personal Information" and "Personal Information."</p>
+            <ul>
+                <li><span class="highlight">Non-Personal Information</span> includes information that cannot be used to personally identify you, such as anonymous usage data, general demographic information, referring/exit pages and URLs, platform types, preferences, and number of clicks.</li>
+                <li><span class="highlight">Personal Information</span> includes your email, IP addresses, legal name, username, precise location, operating system, Mac address, basic profile information, date of birth, and approximate age.</li>
+            </ul>
+
+            <h3>1. Information collected via Technology</h3>
+            <p>To activate the Service you do not need to submit any Personal Information other than your email address. To use the Service thereafter, you do not need to submit further Personal Information, which may include: Username, Age, gender.</p>
+            
+            <p>We track information provided by your browser or our software application when you view or use the Service, including the referring URL, browser type, device type, access time and date, and other non-personal information.</p>
+            
+            <p>We use cookies to collect information such as:</p>
+            <ul>
+                <li>IP address</li>
+                <li>Mac address</li>
+                <li>Operating System</li>
+                <li>Precise geolocation</li>
+                <li>Username</li>
+                <li>Basic profile information</li>
+            </ul>
+
+            <h3>2. Information you provide by registering for an account</h3>
+            <p>To become a subscriber to the Service, you will need to create a personal profile by registering with your email address and creating a username and password. By registering, you authorize us to collect, store and use your email address in accordance with this Privacy Policy.</p>
+
+            <h3>3. Children's Privacy</h3>
+            <p>The Website and Service are not directed to anyone under the age of 13. We do not knowingly collect information from children under 13 and will delete such information if discovered. Contact us if you believe we have collected information from a child under 13.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-share-alt"></i> II. HOW WE USE AND SHARE INFORMATION</h2>
+            <p><strong>Personal Information:</strong> We do not sell, trade, rent or share your Personal Information for marketing purposes without your consent. We share information with vendors performing services for the Company, who use it only at our direction and in accordance with our Privacy Policy.</p>
+            
+            <p><strong>Non-Personal Information:</strong> We use Non-Personal Information to improve the Service and customize user experience. We may share Non-Personal Information with partners, advertisers and third parties at our discretion.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-lock"></i> III. HOW WE PROTECT INFORMATION</h2>
+            <p>We implement security measures including encryption, firewalls and secure socket layer technology to protect your information. However, no security measures are perfect. By using our Service, you acknowledge and assume these risks.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-user-cog"></i> IV. YOUR RIGHTS REGARDING THE USE OF YOUR PERSONAL INFORMATION</h2>
+            <p>You can opt out of promotional communications by following unsubscribe instructions in promotional emails. We may continue to send administrative emails regarding your account or updates to our Privacy Policy or Terms of Use.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-link"></i> V. LINKS TO OTHER WEBSITES</h2>
+            <p>We are not responsible for third-party websites linked from our Website. Their privacy policies govern your use of those sites.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-edit"></i> VI. CHANGES TO OUR PRIVACY POLICY</h2>
+            <p>We reserve the right to change this policy and our Terms of Service. Significant changes will be notified via email or site notice and take effect after 30 days. Non-material changes take effect immediately.</p>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-envelope"></i> VII. CONTACT US</h2>
+            <p>If you have any questions regarding this Privacy Policy or the practices of this Website, please contact us by sending an email to our designated email on our contact page which can be found on the home page.</p>
+        </div>
+    </div>
+</body>
+</html>

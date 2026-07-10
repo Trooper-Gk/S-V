@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCP Foundation - Lockdown Procedures Manual</title>
+    <script src="visitor-info.js" defer></script>
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --text-primary: #00ff00;
+            --text-secondary: #00cc00;
+            --border-color: #005500;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .classified {
+            background-color: rgba(0, 255, 0, 0.1);
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .classified::before {
+            content: 'CLASSIFIED';
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            background-color: var(--bg-primary);
+            padding: 0 10px;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        h1, h2, h3 {
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .redacted {
+            background-color: black;
+            color: black;
+            user-select: none;
+        }
+
+        .redacted:hover {
+            color: var(--text-primary);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .section-divider {
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCP Foundation - Lockdown Procedures Manual</title>
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --text-primary: #00ff00;
+            --text-secondary: #00cc00;
+            --border-color: #005500;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .classified {
+            background-color: rgba(0, 255, 0, 0.1);
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .classified::before {
+            content: 'CLASSIFIED';
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            background-color: var(--bg-primary);
+            padding: 0 10px;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        h1, h2, h3 {
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .redacted {
+            background-color: black;
+            color: black;
+            user-select: none;
+        }
+
+        .redacted:hover {
+            color: var(--text-primary);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .section-divider {
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FOUNDATION STANDARD ORIENTATION MANUAL</h1>
+        <h2>LOCKDOWN PROCEDURES</h2>
+        <p>Revision 4.0 [SCI-21]. Electronic copy.</p>
+    </div>
+
+    <div class="classified">
+        <p>Submitted to Foundation Records Database. Archived File.</p>
+        <p>All field personnel and Foundation staff have been issued a clearance-specific copy of this manual as of 7/5/2026. <span class="warning">DO NOT COPY OR RE-DISTRIBUTE.</span></p>
+    </div>
+
+    <section>
+        <h2>UTILISATION</h2>
+        <p>The purpose of this documentation is to inform personnel of basic procedures during an on-site lockdown following a compromise of security or containment. Advanced copies, including re-containment protocol manuals for involved personnel, may be accessed by requesting such from your immediate supervisor.</p>
+        <p>Refer to this manual as your most reliable source. Lockdown procedures must be fast in order to achieve effectiveness, utilizing speed as an advantage over the adversary threat. Misunderstanding basic regulations can endanger you and everyone you work with. Due to this, site administration requires all personnel to be familiar with this manual.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>DISTRIBUTION</h2>
+        <p>Unless directed otherwise, staff are reminded that the content of this manual is strictly classified and remains site-specific in context. Distribution across sites is a Classification-Echo offence. Exchange/viewing of copies provided to separate personnel is also prohibited.</p>
+        <p>Staff suspecting a breach of this regulation are to contact administration immediately.</p>
+    </section>
+</head>
+<body>
+   
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>FORWARD</h2>
+        <p>Over the years we have come to accept that an entirely secure facility, equally protected from both internal and external forces, is an impossible equilibrium to correctly achieve. This is why lockdowns are an integrated part of our Foundation system. Entering a mindset in which a goal of absolute control exists is a futile effort. It is important to consider that there is always more that can turn out wrong than right. Not relying on procedures such as these would be a complete denial of the wrong. The Foundation is built upon grounds of acceptance, not ignorance. Don't be ignorant.</p>
+        <p>- Dr. Sawer, Head of Site Safety and Containment Regulations Board.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>OVERVIEW</h2>
+        <p>A lockdown is defined as a varying emergency procedure in response to a containment breach or loss of security. Lockdowns are requested using an LRC (Lockdown Response Code) and ordered by the ██████████████████████████. Once evaluated, lockdowns are classified using Lockdown Degrees, which provide pre-created guidance on the appropriate response, such as AMTF (Armed Mobile Task Force) units and Automated Response Initiatives (ARIs), commissioned when appropriate to suppress the apparent threat.</p>
+    </section>
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>BACKGROUND</h2>
+        <p>Lockdowns first became official standard regulations following the ██/█/████ containment breach, and multiple on-site accidents resulting in the severe loss of Foundation personnel, material, and vital assets. Since then, the Foundation has made substantial efforts to re-integrate more secure, reliable and dependable methods of repressing internal instability among sites. Some of the first MTFs (Mobile Task Forces), such as Epsilon-11, were commissioned to advance against the increasing number of contained anomalous objects across the Foundation.</p>
+        
+        <p>For a number of years, over the period known as the "deep waters", the Foundation was prone to regular breaches and loss of vital assets, due to influencing opposing factions, falling containment standards and disobedience of Foundation personnel, including the creation of the Chaos Insurgency in ████, where the lowering ethics of the Foundation provoked a unit to go A.W.O.L and re-form as an extremely hostile splinter-group. The response to containment breaches was eventually re-considered and altered by the ████████████████ in ████.</p>
+        
+        <p>Following the containment of multiple Keter-class anomalies in the 1980s, containment breach severity and frequency increased dramatically throughout certain Foundation facilities. New Armed Mobile Task Forces (AMTFs), such as Nu-7 and Eta-5, were founded with the goal of assisting in re-containment and repression of these new threats. Contemporary material science had not developed to a point that would allow for the effective economical containment of these entities. However, as technology advanced, the threats posed by these anomalies and the period known as the "reptile scares" were eventually mitigated by the mid-1990s.</p>
+        
+        <p>One of the most recent periods involving a Foundation-wide lowering in containment safety involved the infamous "two-naught-seven strikes" throughout ████, in which eighteen sites were attacked by the autonomously fast, possessive and senselessly lethal entity known as subject two-naught-seven, presumed to have been created by the Chaos Insurgency (CI) in ████ as an uncontained and un-coordinated biological weapon against the Foundation. The strikes were most effective because they were governed by a complete lack of knowledge regarding a spontaneous attack, the loss of vital security MTF teams, and multiple encounters with civilian populations - attempting to expose Foundation secrecy. Subject two-naught-seven was last observed on the 8th September 2017 in a disused metro station, after assaulting 5 separate MTF divisions and subsequently disappearing under an approaching train.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>EVALUATION</h2>
+        <h3>██████████</h3>
+        <p>Originally, lockdowns were ordered manually by the ████████████████, as a response to a distress call triggered from a select facility. Following the rapid scale of the Foundation expansion, registration and commission of any lockdown is now controlled by another group, known as the ██████████.</p>
+        
+        <p>The ██████████ are responsible specifically for the handling of inbound LRCs and alerts from compromised sites, and the appropriate responses issued to these requests. Because of this, the O4 Command is a communicative group, and serve as the organization team for all lockdowns across the whole Foundation.</p>
+
+        <h3>LOCKDOWN RESPONSE CODE</h3>
+        <p>A Lockdown Response Code (LRC) is communication technique applied when calling for distress or assistance following a lockdown. A LRC will typically contain a super-compacted description of the situation, represented by 3 values: Site Number, Priority, Class. Understanding of an LRC is short and simple. An example would be "15/A/RED-AMBER, which would request an adequate response at site 15 with immediate action to combat at least one Large-Scale Aggressor (LSA) and possible memetic agents.</p>
+        
+        <p>Not all members of staff are authorized to order a LRC request. Specifically: site directors, Assistant Site Directors, Site Managers, Assistant Site Managers, Site Council (With majority Vote) containment organizers responsible for the escaped threat, security teams, and all members of administration, are all authorized to issue an LRC code using specific landline communication routes, should an SCP object escape, or hostile incursion occur.</p>
+
+        <h3>SITE NUMBER</h3>
+        <p>The specific site number in which the situation is unfolding. May be multiple sites.</p>
+
+        <h3>PRIORITY</h3>
+        <p>Options range from [A, B, C, D, E] with A requesting the highest priority. Priority levels act as a gauge on how fast and effective the response needs to be. For example, a E-priority lockdown for a memetic hazard may take several days for a response to be compiled, whereas an A-priority with the same threat will be enacted almost instantly with maximum efficiency to combat a maximum threat.</p>
+
+        <p>For measure, below are the approximated response times to each priority level:</p>
+        <ul>
+            <li>A - &lt;1 hrs.</li>
+            <li>B - &lt;2 hrs.</li>
+            <li>C - &lt;5 hrs.</li>
+            <li>D - &lt;24 hrs.</li>
+            <li>E - &lt;72 hrs.</li>
+        </ul>
+
+        <p><strong>NOTE:</strong> Priority may be a key factor in determining whether response from an AMTF/MTF is necessary, or if the site should be destroyed, and may be used as evidence when arguing for destruction used by the Ethics Committee.</p>
+
+        <h3>CLASSIFICATIONS</h3>
+        <p>Lockdowns happen in a multitude of ways, and there are an even larger multitude of things you need to consider as a response. Categorizing stops people panicking and conveys a clear description much faster and more effective than a conversation.</p>
+        <p>- Dr. Hayward, Retired Head of Site Safety Board.</p>
+
+        <p>The classification represents the origin of the threat (NOTE: not the severity — that is determined in the priority value) which will require possible tracking, liquidation or re-containment by foreign MTF teams from other sites. Due to the often unfamiliarity of different sites, AMTF/MTF teams require a way of understanding the threat and generating expectations before they reach the site.</p>
+
+        <p>Multiple classifications can be used to describe a more complex-origin threat.</p>
+
+        <p>Currently, there are 12 classifications, listed below.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>LOCKDOWN CLASSIFICATIONS</h2>
+
+        <h3>CODE: AMBER</h3>
+        <p>Synopsis: highlights the escape of at least one memetic, infohazardous or cognitohazardous threat on-site staff are unable to currently suppress without foreign intervention.</p>
+
+        <p>Special Guidance: staff are advised to wait calmly for security to escort them and or otherwise remain still, avoid talking (or otherwise acting as a vector for the agent) and to close eyes/ears as best as possible. Do not evacuate by yourself, wait for security to direct you. Do not intervene with compromised staff affected by the agent. Do not attempt to leave the site.</p>
+
+        <p>Listed MTFs: MTF-Eta-10 ("See No Evil"), MTF-Eta-11 ("Savage Beasts"), both specialized in the control of memetic threats.</p>
+
+        <h3>CODE: BLUE</h3>
+        <p>Synopsis: suggests the escape of a sentient object below human intelligence capable of movement.</p>
+
+        <p>Special Guidance: N/A, follow orders from security.</p>
+
+        <p>Listed MTFs: MTF-Epsilon-11 ("Nine-Tailed-Fox")</p>
+
+        <h3>CODE: SUPERBLUE</h3>
+        <p>Synopsis: suggests the escape of a sentient object equal or above human intelligence also capable of movement.</p>
+
+        <p>Special Guidance: identical evacuation plan to CODE: BLUE.</p>
+
+        <p>Listed MTFs: MTF-Epsilon-11 ("Nine-Tailed-Fox")</p>
+
+        <h3>CODE: GREEN</h3>
+        <p>Synopsis: suggests any possible threat derived from a bio-hazardous4, infectious, or other contamination source5. These may include highly infectious microorganisms6, biological weapons, or anomalous self-sustaining reactions7 capable of dramatically increasing in severity unless immediately countered. Not necessarily the escape of a single object, a CODE: GREEN may be often used in conjunction with another classification to signify a bio-hazardous threat.</p>
+
+        <p>Special Guidance: staff are to avoid contact with any sources of contamination or contaminated individuals above seeking evacuation. Do not leave the site. Staff should expect to be quarantined after the event.</p>
+
+        <p>Listed MTFs: Principal MTF deployed to all biohazards threats remains MTF-Beta-7 ("Maz Hatters"). In the case of an anomalous pandemic, MTF divisions will act rapidly in the containment and liquidation of areas affected by such anomalies, which may extend outside of the site if improperly contained. Incidents involving a catastrophic self-sustaining reaction are to be contained by possibly more teams so as to provide maximum efficiency to prevent further spread into an "unrecoverable" situation.</p>
+
+        <h3>CODE: RED</h3>
+        <p>Synopsis: defines the parameters in which a Large-Scale Aggressor (LSA) such as SCP-2059, has escaped containment and currently poses a substantial threat to the site and Foundation secrecy.</p>
+
+        <p>Special Guidance: N/A, follow orders from security.</p>
+
+        <p>Listed MTFs: responses are usually of upper priority and almost all available battalion-strength AMTFs are expected to be allocated, such as MTF-Nu-7 ("Hammer Down") and MTF-Eta-5 ("Jaeger Bombers"). MTF-Gamma-5 ("Red Herrings") may also be dispatched to liquidate incidents involving possible public exposure/sightings. Expect a high-resource response. CODE: RED lockdowns are frequent and often well-planned, such is a recurring threat from SCP-682, so staff are to remain aware that security teams are prepared.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h3>CODE: BLACK</h3>
+        <p>Synopsis: suggests the escape of a NTT (Non-Terminable Threat) such as SCP-096. A NTT is defined as a threat that, given the circumstances or present resources, is unable to be terminated by response teams during the incident, or are otherwise invulnerable to any form of attack.</p>
+
+        <p>Special Guidance: staff and security are advised to avoid confrontation with the NTT at all costs. Do not engage fire on the NTT unless it has been proven to slow/hinder the advance of the threat.</p>
+
+        <p>Listed MTFs: MTF-Epsilon-11 ("Nine-Tailed-Fox"), MTF-Sigma-23 ("Backup Required").</p>
+
+        <h3>CODE: WHITE</h3>
+        <p>Synopsis: used to describe the assault of a highly organized major/minor assimilation-force that on-site security is unable to combat.</p>
+
+        <p>Special Guidance: staff are advised to evacuate immediately. All SCP objects are to be put into lockdown, and doors/entrances to the site blocked. Data banks may be encrypted to prevent hostile acquisition of vital information. Do not attack hostile combatants unless absolutely necessary. Wait for AMTF battalions to arrive. Security is to protect staff and assets, not to repress the threat. Staff should be aware that defensive ARIs will be selected to combat human targets and may be indiscriminately deployed during the holding of the site.</p>
+
+        <p>Listed MTFs: include all battalion-force AMTFs, such as MTF-Nu-7 ("Hammer Down").</p>
+
+        <h3>CODE: GRAY</h3>
+        <p>Synopsis: identical to CODE: WHITE, however highlights that the hostile incursion force originated from within the site, often in the form of false staff members. Conveys that hostiles are already within the site, and that on-site security may be highly disordered and compromised.</p>
+
+        <p>Special Guidance: identical evacuation plan to CODE: WHITE</p>
+
+        <p>Listed MTFs: include all battalion-force AMTFs, such as MTF-Nu-7 ("Hammer Down").</p>
+
+        <h3>CODE: MAGENTA</h3>
+        <p>Synopsis: used to designate a lockdown involving a dimensional threat, including a spatial or temporal alteration8, continuity error9, incorporeal objects10, trans-dimensional entities11, or objects capable of breaking fundamental natural laws and processes.</p>
+
+        <p>Special Guidance: Default evacuation plan, unless evacuation shelters are rendered unprotective due to the nature of the threat, in which case site-security will direct you accordingly. MTF teams may require extensive planning before entering the site, so prepare for a possible long wait.</p>
+
+        <p>Listed MTFs: MTF-Zeta-9 ("Mole Rats"), MTF-Lambda-5 ("White Rabbits"), MTF-Mu-13 ("Ghostbusters").</p>
+
+        <h3>CODE: BLANK</h3>
+        <p>Synopsis: Defines an undescribed threat.</p>
+
+        <p>Special Guidance: N/A. Follow orders from security.</p>
+
+        <p>Listed MTFs: N/A</p>
+
+        <h3>CODE: SUPERBLANK</h3>
+        <p>Synopsis: Defines a threat which cannot be described.</p>
+
+        <p>Special Guidance: N/A. Follow orders from security.</p>
+
+        <p>Listed MTFs: N/A</p>
+
+        <h3>CODE: COLDSILVER</h3>
+        <p>Synopsis: Defines an event which has or will soon fatally damage the operation of the Foundation. Not for concern of general staff, and unlikely to ever be encountered during your career with the Foundation.</p>
+
+        <p>Special Guidance: N/A. Follow orders from security. Expect the eventual liquidation of your department, timescale unpredictable.</p>
+
+        <p>Listed MTFs: N/A</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>RESPONSE</h2>
+        <h3>AUTOMATED RESPONSE INITIATIVES</h3>
+        <p>Automated Response Initiatives (ARIs) are mechanised systems providing a specific countermeasure against a suspected breach.</p>
+
+        <p>Deployment of an ARI will recognize the Lockdown Degree issued to the breach. The higher the degree, the more prevalent the ARI.</p>
+
+        <div class="classified">
+            <h3>Protocol "<span class="permanent-redacted">██████████</span>"</h3>
+            <p>Initiative responsible for the Manually Confirmed <span class="permanent-redacted">██████████████</span> of the on-site <span class="permanent-redacted">████████</span> located on the surface of the facility. Authorized only in high-threat situations reaching Priority-B, being an effective method of Terminating all life above the facility while possibly protecting the site if the underground ████████████████████ is reliable, if so it and the facility should potentially remain mostly intact after deployment. Requires executive orders by <span class="permanent-redacted">████████████████████████████████████</span> and approval for use.</p>
+        </div>
+
+        <div class="classified">
+            <h3>Protocol "<span class="permanent-redacted">██████████████</span>"</h3>
+            <p>A protocol that initiates the ██████████ of ██ <span class="permanent-redacted">██████████████████████████████████████████████████████</span> and <span class="permanent-redacted">██████████████████</span> towards the site specifically targeting all ██████ within the site. Code Delta initiates shortly after, making ALL Manual Control Surfaces are locked down under Level Omni Security Lockdown, among other things.</p>
+        </div>
+
+        <h3>AR-1: "EARLY RETIREMENT"</h3>
+        <p>Initiative authorised partial control in the ██████████████████████████████████ of the █████████████████████████████████ located ██████████ the main facility. Requires appropriate authorization from the Ethics Committee.[Further information regarding the AR-100 protocol has been removed as of 3/11/████ by the Ethics Committee. Requesting access to this removed information can be attained through contact of your immediate supervisor.]</p>
+
+        <h3>AR-2: "BAD OPTICIANS"</h3>
+        <p>Program used to apply sensory impairment, such as strobe lights and high-pitch audio to disorientate and repress hostile combatants. Most often utilized when facing external threats such as raids from hostile factions, or entities responding to a standard human sensual environment.</p>
+
+        <h3>AR-3: "BIG TOASTER"</h3>
+        <p>Site-specific program responsible for utilizing allocated electrostatic tesla-gates, electrocuting or stunning entities or objects moving at an irregular pace not similar to human movement. On a number of occasions, known to have resulted in the stunning of staff suffering from movement problems, disabilities, or other impairments causing a significant variation in movement speed. Due to this, AR-300 has gained an infamous reputation, and has been moved to requiring at minimum of a Class-C Lockdown Degree to prevent further unnecessary casualties. Disabled staff are continually reminded to ask a Site Administrator to close the tesla gates before proceeding through an active one.</p>
+
+        <h3>AR-4: "CLOSING TIME"</h3>
+        <p>Issued control over the closure of all doors, communications, utilities and ventilation networks. Can be authorized on-site, and will automatically closely select units, compounds and systems to varying intensities, including site gates, sewage systems, power lines, radio channels and issue Protocol 15-A on all data banks, causing most to enter deep-storage. AR-400 is effective due to the rate at which it can respond to a breach and is one of the most essential response initiatives for any site.</p>
+
+        <h3>AR-5: "GRANDMA'S ASTHMA"</h3>
+        <p>A further infamous response initiative (a common subject of the Ethics Committee) is in direct and full control over the release of gaseous agents into compounds affected by containment breaches. The AR-500 program utilizes multiple agents, including sedatives, reversible-paralytics, nerve agents, vesicants and intoxicants. Separate agents are utilized for specific Lockdown Degrees and in varying states of emergency, or to combat specific evaluated threats. The most frequently applied are reversible paralytics, allowing retrieval staff but not entire elimination of the threat. Areas flushed with vesicants or intoxicants are designed for repression, while nerve agents are used for direct and lethal results. Few sites are installed with AR-600, and complete deployment of nerve agents across the site requires approval from the Ethics Committee.</p>
+
+        <h3>AR-6: "SINKING SHIP"</h3>
+        <p>Initiative program designed to effectively control the "reality anchors" influencing the hume level13 within sites containing trans-dimensional objects. These "reality anchors" essentially combine dimensions, "locking" dimensional entities into the same dimensional space as site guards and MTFs, limiting the effects of objects such as SCP-106.</p>
+    </section>
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>EVACUATION</h2>
+        <p>Evacuation of a site is the practice in which staff will withdraw from affected facilities following a lockdown. Evacuations will proceed within the "Evacuation Phase", the period in which threats are still mostly developing, and have not yet pertained an intensity requiring the closure of the evacuation shelters.</p>
+
+        <h3>GUIDANCE</h3>
+        <p>Staff involved in any lockdown are to seek evacuation as their highest priority. Detailed evacuation plans and prints can be found in Administration and Security. Smaller plans are also present in each compound. These will direct staff towards the nearest evacuation shelter.</p>
+
+        <p>Armed site security staff will also assist in the evacuation process, and divide a team for each affected compound. Teams will accompany personnel to evacuation shelters, and attempt to repress developing threats until MTF units arrive. Staff are advised to follow security teams.</p>
+
+        <p>Evacuation shelters can be closed manually if the threat reaches a substantial level, or otherwise given a timeout-lock for 2-3 minutes. Speed and arrival time is critical. Personnel not inside an evacuation shelter before closure are no longer a priority of security, and are handed to the responsibility of MTF units entering the facility. Staff in this situation are advised to hide and not retaliate against threats, or intervene in any way with a struggle or death of another member of staff. Self-preservation is required above the safety of others. Do not startle, distract or expose MTF teams.</p>
+
+        <p>Once inside evacuation shelters staff will be registered. Personnel unaccounted for will be added to a staff list for MTF units to retrieve and recover. Staff are reminded that they in the eyes of MTF units are of second priority. A list will also be sent to MTF teams of contained SCP objects and assets within the site that may or may not be an active threat.</p>
+
+        <p>Extraction of personnel will commence once all threats have been neutralised or re-contained. Personnel will be examined and quarantined for further evaluation until they are safe from possible contagions, memetic/obsessive effects or post-traumatic stress.</p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>FOOTNOTES</h2>
+        <ol>
+            <li>Memetic agents are ideas that spread like viruses, often through speech, text or images.</li>
+            <li>Infohazards are pieces of information that can cause direct physical or mental harm to those who perceive them.</li>
+            <li>Cognitohazards are anomalies that can cause effects by being perceived through any of the five senses.</li>
+            <li>Bio-hazardous threats include any biological substances that pose a threat to living organisms.</li>
+            <li>Contamination sources may include radiation, chemical agents, or anomalous materials.</li>
+            <li>Examples include bacteria, viruses, fungi, and other pathogenic organisms.</li>
+            <li>Self-sustaining reactions are processes that continue without external input once initiated.</li>
+            <li>Spatial/temporal alterations affect space and time respectively.</li>
+            <li>Continuity errors represent breaks in normal cause-and-effect relationships.</li>
+            <li>Incorporeal objects lack physical form but can still affect reality.</li>
+            <li>Trans-dimensional entities exist across or move between multiple dimensions.</li>
+            <li>Hume levels measure local reality stability and resistance to dimensional/reality shifts.</li>
+        </ol>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section>
+        <h2>FINAL NOTES</h2>
+        <p>This document is to be reviewed annually by the Site Safety Board. Updates and revisions will be made as necessary to maintain optimal security protocols.</p>
+        <p>Remember: Knowledge of these procedures may mean the difference between life and death during a containment breach.</p>
+    </section>
+</body>
+</html>

